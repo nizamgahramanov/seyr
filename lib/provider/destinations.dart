@@ -12,10 +12,7 @@ class Destinations with ChangeNotifier {
   var uuid = Uuid();
   final List<Destination> _destinationItems = [];
   Stream<List<Destination>> get destinationItemsAll {
-
     final allDestination = firestore_service.getDestinations();
-    print("DESTINATIKON");
-    print(allDestination.length);
     return allDestination;
   }
 
@@ -23,13 +20,11 @@ class Destinations with ChangeNotifier {
     return _destinationItems.firstWhere((element) => element.id == id);
   }
 
-  void saveData(BuildContext context,
-      Destination newDestination, List<File?> destinationPhoto) async {
-    print("Destination item");
+  void saveData(BuildContext context, Destination newDestination,
+      List<File?> destinationPhoto) async {
     print(newDestination.createMap().toString());
-    final urlList = await storage_service.saveDestinationImages(context,
-        newDestination, destinationPhoto);
-    print('url');
+    final urlList = await storage_service.saveDestinationImages(
+        context, newDestination, destinationPhoto);
     newDestination.photoUrl = urlList;
     await firestore_service.saveDestination(newDestination);
   }
