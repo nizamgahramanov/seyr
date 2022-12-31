@@ -120,7 +120,6 @@ class _PasswordScreenState extends State<PasswordScreen> {
               height: 20,
             ),
             AppLightText(
-              spacing: 16,
               text: "${'welcome_msg'.tr()} ${args['email']}",
               padding: EdgeInsets.zero,
             ),
@@ -136,7 +135,6 @@ class _PasswordScreenState extends State<PasswordScreen> {
                     size: 18,
                     color: AppColors.blackColor,
                     fontWeight: FontWeight.bold,
-                    spacing: 2,
                     padding: EdgeInsets.zero,
                   ),
                   const SizedBox(

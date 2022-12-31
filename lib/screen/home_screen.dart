@@ -40,15 +40,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                AppLightText(
-                  text: 'home_title'.tr(),
-                  color: AppColors.blackColor,
-                  fontWeight: FontWeight.bold,
-                  spacing: 0,
-                  padding: EdgeInsets.zero,
-                  size: 24,
-                  alignment: Alignment.centerLeft,
-                  textAlign: TextAlign.start,
+                Flexible(
+                  fit: FlexFit.tight,
+                  child: AppLightText(
+                    text: 'home_title'.tr(),
+                    color: AppColors.blackColor,
+                    fontWeight: FontWeight.bold,
+                    spacing: 0,
+                    padding: EdgeInsets.zero,
+                    size: 20,
+                    alignment: Alignment.centerLeft,
+                    textAlign: TextAlign.start,
+                    maxLines: 2,
+                  ),
                 ),
                 if (widget.isLogin)
                   CustomButton(
