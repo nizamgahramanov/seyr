@@ -22,7 +22,7 @@ class _StartScreenState extends State<StartScreen> {
     super.didChangeDependencies();
   }
 
-  void goToMainScreen() {
+  void _goToMainScreen() {
     preloadSvgFiles();
     Navigator.pushReplacement(
       context,
@@ -96,7 +96,7 @@ class _StartScreenState extends State<StartScreen> {
               ),
               CustomButton(
                 buttonText: 'get_started_btn'.tr(),
-                onTap: goToMainScreen,
+                onTap: _goToMainScreen,
                 borderRadius: 15,
                 borderColor: AppColors.backgroundColorOfApp,
               ),

@@ -31,14 +31,14 @@ class _LoginWithPasswordScreenState extends State<LoginWithPasswordScreen> {
   final _passwordFocusNode = FocusNode();
   bool _isObscure = true;
   bool _isShowDoneButton = false;
+  bool _isDisableContinueButton = false;
 
-  void saveForm() {
-    //check in firebase email is registered or not
+  void _saveForm() {
     FocusScope.of(context).unfocus();
     _loginWithPasswordForm.currentState!.save();
   }
 
-  void checkIfPasswordChanged(String text) {
+  void _checkIfPasswordChanged(String text) {
     if (_passwordController.text != '') {
       setState(() {
         _isShowDoneButton = true;
@@ -57,6 +57,9 @@ class _LoginWithPasswordScreenState extends State<LoginWithPasswordScreen> {
   }
 
   void _goProfileScreen() {
+    setState(() {
+      _isDisableContinueButton=false;
+    });
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
@@ -66,21 +69,14 @@ class _LoginWithPasswordScreenState extends State<LoginWithPasswordScreen> {
       ),
       (Route<dynamic> route) => false,
     );
-    // Navigator.pushNamedAndRemoveUntil(
-    //     context, MainScreen.routeName, (route) => false);
   }
 
-  void goForgotPasswordScreen(String email) {
-    Navigator.pushNamed(context, ChangePasswordScreen.routeName,
-        arguments: {'email': email});
-  }
-
-  void checkPasswordCorrect(context, email, enteredPassword) async {
-    //    1. Daxil olan userin emailinə vasitəsi ilə firestoredan məlumatlarını çəkirik
-    //    2. Melumatlarda encrypt olunmuş passvordu decrypt edib userin daxil etiyi passvordla yoxlayiriq
-    //    3. userin daxil etdiyi passvord dogrudursa home page yoneldirik
-    //    4. dogru deyilse dialog gosteririk
+  void _checkPasswordCorrect(context, email, enteredPassword) async {
     if (_isShowDoneButton) {
+      print("CIKCEKSD");
+      setState(() {
+        _isDisableContinueButton=true;
+      });
       final String? base16Encrypted =
           await FireStoreService().getUserPasswordFromFirestore(email);
       bool isPasswordCorrect =
@@ -93,6 +89,9 @@ class _LoginWithPasswordScreenState extends State<LoginWithPasswordScreen> {
         );
         _goProfileScreen();
       } else {
+        setState(() {
+          _isDisableContinueButton=false;
+        });
         Utility.getInstance().showAlertDialog(
             popButtonColor: AppColors.backgroundColorOfApp,
             context: context,
@@ -144,10 +143,10 @@ class _LoginWithPasswordScreenState extends State<LoginWithPasswordScreen> {
                       ? const Icon(Icons.remove_red_eye_outlined)
                       : const Icon(Icons.remove_red_eye),
                 ),
-                onChanged: (value) => checkIfPasswordChanged(value),
-                onFieldSubmitted: (_) => saveForm(),
+                onChanged: (value) => _checkIfPasswordChanged(value),
+                onFieldSubmitted: (_) => _saveForm(),
                 onSaved: (value) =>
-                    checkPasswordCorrect(context, args['email'], value),
+                    _checkPasswordCorrect(context, args['email'], value),
               ),
             ],
           ),
@@ -158,7 +157,7 @@ class _LoginWithPasswordScreenState extends State<LoginWithPasswordScreen> {
               buttonText: 'done_btn'.tr(),
               borderRadius: 15,
               horizontalMargin: 20,
-              onTap: saveForm,
+              onTap: _isDisableContinueButton?(){}:_saveForm,
               borderColor: AppColors.primaryColorOfApp,
             )
           : null,

@@ -34,6 +34,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
   bool _isShowDoneButton = false;
   bool _isObscureNewPassword = true;
   bool _isObscureRepeatPassword = true;
+  bool _isDisableDoneButton = false;
 
   @override
   void initState() {
@@ -123,7 +124,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
     }
   }
 
-  void updateUserPassword(String newPassword, String email) async {
+  void _updateUserPassword(String newPassword, String email) async {
     if (_isShowDoneButton) {
       final String? base16Encrypted =
           await FireStoreService().getUserPasswordFromFirestore(email);
@@ -146,17 +147,24 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
       oldPassword,
       email,
     );
-    Navigator.push(
+    setState(() {
+      _isDisableDoneButton = false;
+    });
+    Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
         builder: (context) => MainScreen(
           bottomNavIndex: 3,
         ),
       ),
+      (Route<dynamic> route) => false,
     );
   }
 
-  void saveForm() {
+  void _saveForm() {
+    setState(() {
+      _isDisableDoneButton = true;
+    });
     FocusScope.of(context).unfocus();
     _resetPasswordForm.currentState!.save();
   }
@@ -250,9 +258,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
                         textInputAction: TextInputAction.done,
                         onChanged: (value) =>
                             _checkRepeatPasswordValidation(value),
-                        onFieldSubmitted: (_) => saveForm(),
+                        onFieldSubmitted: (_) => _saveForm(),
                         onSaved: (value) =>
-                            updateUserPassword(value, args['email']),
+                            _updateUserPassword(value, args['email']),
                       ),
                       const SizedBox(
                         height: 20,
@@ -323,7 +331,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
                         isIconFirst: true,
                       ),
                       const SizedBox(
-                        height: 80,
+                        height: 85,
                       )
                     ],
                   ),
@@ -339,7 +347,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
               borderRadius: 15,
               horizontalMargin: 20,
               verticalMargin: 5,
-              onTap: () => saveForm(),
+              onTap: _isDisableDoneButton ? () {} : () => _saveForm(),
               borderColor: AppColors.primaryColorOfApp,
             )
           : null,

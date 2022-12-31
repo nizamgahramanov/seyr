@@ -177,39 +177,25 @@ class _DetailScreenState extends State<DetailScreen>
                             snapshot.connectionState ==
                                 ConnectionState.active) {
                           if (snapshot.hasError) {
-                            return ErrorAndNoNetworkAndFavoriteScreen(
-                              text: 'something_went_wrong_error_msg'.tr(),
-                              path: errorImage,
+                            return _buildTextButton(
+                              () {},
+                              const Icon(
+                                Icons.error_outline_outlined,
+                                color: AppColors.backgroundColorOfApp,
+                              ),
                             );
                           } else {
-                            return Container(
-                              // color: Colors.redAccent,
-                              width: 50,
-                              margin: const EdgeInsets.only(
-                                right: 20,
-                                left: 5,
-                                top: 5,
-                                bottom: 5,
-                              ),
-                              child: TextButton(
-                                onPressed: () =>
-                                    toggleFavorite(clickedDestination),
-                                style: ElevatedButton.styleFrom(
-                                  shape: const CircleBorder(),
-                                  padding: EdgeInsets.zero,
-                                  primary: AppColors.primaryColorOfApp,
-                                ),
-                                child: !snapshot.hasData ||
-                                        snapshot.data!.docs.isEmpty
-                                    ? const Icon(
-                                        Icons.favorite_border_outlined,
-                                        color: AppColors.backgroundColorOfApp,
-                                      )
-                                    : const Icon(
-                                        Icons.favorite,
-                                        color: AppColors.backgroundColorOfApp,
-                                      ),
-                              ),
+                            return _buildTextButton(
+                              () => toggleFavorite(clickedDestination),
+                              !snapshot.hasData || snapshot.data!.docs.isEmpty
+                                  ? const Icon(
+                                      Icons.favorite_border_outlined,
+                                      color: AppColors.backgroundColorOfApp,
+                                    )
+                                  : const Icon(
+                                      Icons.favorite,
+                                      color: AppColors.backgroundColorOfApp,
+                                    ),
                             );
                           }
                         } else {
@@ -224,7 +210,6 @@ class _DetailScreenState extends State<DetailScreen>
                 floating: true,
                 pinned: true,
                 flexibleSpace: FlexibleSpaceBar(
-                  // titlePadding: EdgeInsets.zero,
                   expandedTitleScale: 1.8,
                   collapseMode: CollapseMode.parallax,
                   titlePadding: _innerListIsScrolled
@@ -333,9 +318,6 @@ class _DetailScreenState extends State<DetailScreen>
                                 ),
                             ],
                           ),
-                          // const SizedBox(
-                          //   height: 15,
-                          // ),
                           AppLightText(
                             text: 'overview'.tr(),
                             color: AppColors.blackColor,
@@ -376,6 +358,28 @@ class _DetailScreenState extends State<DetailScreen>
             )
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+    );
+  }
+
+  Widget _buildTextButton(VoidCallback? onPressed, Widget child) {
+    return Container(
+      // color: Colors.redAccent,
+      width: 50,
+      margin: const EdgeInsets.only(
+        right: 20,
+        left: 5,
+        top: 5,
+        bottom: 5,
+      ),
+      child: TextButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          shape: const CircleBorder(),
+          padding: EdgeInsets.zero,
+          primary: AppColors.primaryColorOfApp,
+        ),
+        child: child,
+      ),
     );
   }
 }

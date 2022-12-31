@@ -22,7 +22,6 @@ class ErrorAndNoNetworkAndFavoriteScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: SizedBox(
-        width: double.infinity,
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Center(
@@ -33,14 +32,18 @@ class ErrorAndNoNetworkAndFavoriteScreen extends StatelessWidget {
                   width: width,
                   height: height,
                 ),
-                AppLightText(
-                  spacing: 0,
-                  text: text,
-                  size: 18,
-                  color: AppColors.blackColor54,
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.zero,
-                  fontWeight: FontWeight.bold,
+
+                Flexible(
+                  fit: FlexFit.tight,
+                  child: AppLightText(
+                    spacing: 0,
+                    text: text,
+                    size: 18,
+                    color: AppColors.blackColor54,
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.zero,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),

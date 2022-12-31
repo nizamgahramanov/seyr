@@ -29,7 +29,8 @@ class _PasswordScreenState extends State<PasswordScreen> {
   bool _atLeastOneLowerCase = false;
   bool _atLeastOneUpperCase = false;
   bool _isObscure = true;
-  void saveForm() {
+
+  void _saveForm() {
     FocusScope.of(context).unfocus();
     _form.currentState!.save();
   }
@@ -97,7 +98,8 @@ class _PasswordScreenState extends State<PasswordScreen> {
   Widget build(BuildContext context) {
     final args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    void goNextScreen(String value) {
+
+    void _goNextScreen(String value) {
       if (!args['provider'] && _isShowContinueButton) {
         Navigator.pushNamed(
           context,
@@ -122,6 +124,8 @@ class _PasswordScreenState extends State<PasswordScreen> {
             AppLightText(
               text: "${'welcome_msg'.tr()} ${args['email']}",
               padding: EdgeInsets.zero,
+              textAlign: TextAlign.start,
+              alignment: Alignment.topLeft,
             ),
             const SizedBox(
               height: 20,
@@ -153,8 +157,8 @@ class _PasswordScreenState extends State<PasswordScreen> {
                       textInputAction: TextInputAction.done,
                       focusNode: _passwordFocusNode,
                       onChanged: (value) => checkPasswordValidations(value),
-                      onSaved: (value) => goNextScreen(value),
-                      onFieldSubmitted: (_) => saveForm(),
+                      onSaved: (value) => _goNextScreen(value),
+                      onFieldSubmitted: (_) => _saveForm(),
                       obscureText: _isObscure,
                       suffixIcon: GestureDetector(
                         onTap: () => toggleObscure(),
@@ -243,7 +247,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
               buttonText: 'continue_btn'.tr(),
               borderRadius: 15,
               horizontalMargin: 20,
-              onTap: saveForm,
+              onTap: _saveForm,
               borderColor: AppColors.primaryColorOfApp,
             )
           : null,

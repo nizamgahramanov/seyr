@@ -149,7 +149,7 @@ class _AddDestinationScreenState extends State<AddDestinationScreen> {
                         child: CustomTextFormField(
                           controller: _nameController,
                           textInputAction: TextInputAction.next,
-                          keyboardType: TextInputType.emailAddress,
+                          keyboardType: TextInputType.name,
                           focusNode: _nameFocusNode,
                           validator: (value) {
                             if (value!.isEmpty) {
@@ -158,7 +158,7 @@ class _AddDestinationScreenState extends State<AddDestinationScreen> {
                             return null;
                           },
                           onFieldSubmitted: (_) => FocusScope.of(context)
-                              .requestFocus(_overviewFocusNode),
+                              .requestFocus(_overviewAzFocusNode),
                         ),
                       ),
                     ],
@@ -191,7 +191,7 @@ class _AddDestinationScreenState extends State<AddDestinationScreen> {
                           return null;
                         },
                         onFieldSubmitted: (_) => FocusScope.of(context)
-                            .requestFocus(_regionFocusNode),
+                            .requestFocus(_overviewFocusNode),
                       ),
                     ],
                   ),
@@ -214,7 +214,7 @@ class _AddDestinationScreenState extends State<AddDestinationScreen> {
                       CustomTextFormField(
                         controller: _overviewController,
                         textInputAction: TextInputAction.next,
-                        keyboardType: TextInputType.text,
+                        keyboardType: TextInputType.name,
                         focusNode: _overviewFocusNode,
                         validator: (value) {
                           if (value!.isEmpty) {
@@ -223,7 +223,7 @@ class _AddDestinationScreenState extends State<AddDestinationScreen> {
                           return null;
                         },
                         onFieldSubmitted: (_) => FocusScope.of(context)
-                            .requestFocus(_overviewAzFocusNode),
+                            .requestFocus(_regionAzFocusNode),
                       ),
                     ],
                   ),
@@ -246,7 +246,7 @@ class _AddDestinationScreenState extends State<AddDestinationScreen> {
                       CustomTextFormField(
                         controller: _regionAzController,
                         textInputAction: TextInputAction.next,
-                        keyboardType: TextInputType.text,
+                        keyboardType: TextInputType.name,
                         focusNode: _regionAzFocusNode,
                         validator: (value) {
                           if (value!.isEmpty) {
@@ -255,7 +255,7 @@ class _AddDestinationScreenState extends State<AddDestinationScreen> {
                           return null;
                         },
                         onFieldSubmitted: (_) => FocusScope.of(context)
-                            .requestFocus(_regionAzFocusNode),
+                            .requestFocus(_regionFocusNode),
                       ),
                     ],
                   ),
@@ -278,7 +278,7 @@ class _AddDestinationScreenState extends State<AddDestinationScreen> {
                       CustomTextFormField(
                         controller: _regionController,
                         textInputAction: TextInputAction.next,
-                        keyboardType: TextInputType.text,
+                        keyboardType: TextInputType.name,
                         focusNode: _regionFocusNode,
                         validator: (value) {
                           if (value!.isEmpty) {
@@ -286,8 +286,7 @@ class _AddDestinationScreenState extends State<AddDestinationScreen> {
                           }
                           return null;
                         },
-                        onFieldSubmitted: (_) => FocusScope.of(context)
-                            .requestFocus(_regionAzFocusNode),
+                        onFieldSubmitted: (_) {},
                       ),
                     ],
                   ),

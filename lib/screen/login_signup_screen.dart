@@ -26,12 +26,13 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
   final _auth = FirebaseAuth.instance;
   final TextEditingController _emailController = TextEditingController();
   bool _isShowSaveButton = false;
+  bool _isDisableContinueButton = false;
+  bool _isDisableGoogleButton = false;
 
   void checkIfEmailChanged(String character) {
     if (_emailController.text != '' &&
         RegExp(r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
             .hasMatch(_emailController.text)) {
-      // if(_emailController.text != ''){
       setState(() {
         _isShowSaveButton = true;
       });
@@ -41,6 +42,85 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
           _isShowSaveButton = false;
         }
       });
+    }
+  }
+
+  void directNextScreen(
+    List<String> isEmailExistList,
+    String? base16Encrypted,
+    String value,
+  ) {
+    bool provider = false;
+    Map<String, dynamic> arguments = {"provider": provider, "email": value};
+    if (isEmailExistList.isNotEmpty && base16Encrypted == null) {
+      setState(() {
+        _isDisableContinueButton = false;
+      });
+      Utility.getInstance().showAlertDialog(
+        popButtonColor: AppColors.redAccent300,
+        context: context,
+        alertTitle: 'oops_error_title'.tr(),
+        alertMessage: 'there_is_a_discrepancy_on_email_dialog_msg'.tr(),
+        popButtonText: 'ok_btn'.tr(),
+        onPopTap: () => Navigator.of(context).pop(),
+      );
+    } else {
+      if (isEmailExistList.isEmpty) {
+        //  go to password page
+        setState(() {
+          _isDisableContinueButton = false;
+        });
+        Navigator.pushNamed(
+          context,
+          PasswordScreen.routeName,
+          arguments: arguments,
+        );
+      } else {
+        provider = true;
+        if (isEmailExistList[0] == "google.com") {
+          setState(() {
+            _isDisableContinueButton = false;
+          });
+          AuthService().signInWithGoogle(context);
+        } else {
+          setState(() {
+            _isDisableContinueButton = false;
+          });
+          Navigator.pushNamed(
+            context,
+            LoginWithPasswordScreen.routeName,
+            arguments: arguments,
+          );
+        }
+      }
+    }
+  }
+
+  void signInWithGoogle() async {
+    setState(() {
+      _isDisableGoogleButton = true;
+    });
+    await AuthService().signInWithGoogle(context);
+    setState(() {
+      _isDisableGoogleButton = false;
+    });
+  }
+
+  void saveForm() {
+    FocusScope.of(context).unfocus();
+    _form.currentState!.save();
+  }
+
+  void checkEmailIsRegistered(String value) async {
+    if (_isShowSaveButton) {
+      setState(() {
+        _isDisableContinueButton = true;
+      });
+      List<String> isEmailExistList;
+      isEmailExistList = await _auth.fetchSignInMethodsForEmail(value.trim());
+      final String? base16Encrypted =
+          await FireStoreService().getUserPasswordFromFirestore(value);
+      directNextScreen(isEmailExistList, base16Encrypted, value);
     }
   }
 
@@ -87,7 +167,8 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                   if (_isShowSaveButton)
                     CustomButton(
                       buttonText: 'continue_btn'.tr(),
-                      onTap: saveForm,
+                      // onTap: saveForm,
+                      onTap: _isDisableContinueButton ? () {} : saveForm,
                       borderRadius: 15,
                       borderColor: AppColors.primaryColorOfApp,
                     ),
@@ -121,7 +202,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                   CustomButton(
                     buttonText: 'continue_with_google_btn'.tr(),
                     borderColor: AppColors.primaryColorOfApp,
-                    onTap: () => AuthService().signInWithGoogle(context),
+                    onTap: _isDisableGoogleButton ? () {} : signInWithGoogle,
                     borderRadius: 15,
                     buttonColor: Colors.transparent,
                     textColor: AppColors.primaryColorOfApp,
@@ -139,60 +220,5 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
         ),
       ),
     );
-  }
-
-  void saveForm() {
-    FocusScope.of(context).unfocus();
-    _form.currentState!.save();
-  }
-
-  void checkEmailIsRegistered(String value) async {
-    if (_isShowSaveButton) {
-      List<String> isEmailExistList;
-      isEmailExistList = await _auth.fetchSignInMethodsForEmail(value.trim());
-      final String? base16Encrypted =
-          await FireStoreService().getUserPasswordFromFirestore(value);
-      directNextScreen(isEmailExistList, base16Encrypted, value);
-    }
-  }
-
-  void directNextScreen(
-    List<String> isEmailExistList,
-    String? base16Encrypted,
-    String value,
-  ) {
-    bool provider = false;
-    Map<String, dynamic> arguments = {"provider": provider, "email": value};
-    if (isEmailExistList.isNotEmpty && base16Encrypted == null) {
-      Utility.getInstance().showAlertDialog(
-        popButtonColor: AppColors.redAccent300,
-        context: context,
-        alertTitle: 'oops_error_title'.tr(),
-        alertMessage: 'there_is_a_discrepancy_on_email_dialog_msg'.tr(),
-        popButtonText: 'ok_btn'.tr(),
-        onPopTap: () => Navigator.of(context).pop(),
-      );
-    } else {
-      if (isEmailExistList.isEmpty) {
-        //  go to password page
-        Navigator.pushNamed(
-          context,
-          PasswordScreen.routeName,
-          arguments: arguments,
-        );
-      } else {
-        provider = true;
-        //  send auth cde to email address
-        if (isEmailExistList[0] == "google.com") {
-          AuthService().signInWithGoogle(context);
-        } else {
-          Navigator.pushNamed(
-            context,
-            LoginWithPasswordScreen.routeName,
-            arguments: arguments,
-          );
-        }
-      }
-    }
   }
 }

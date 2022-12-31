@@ -22,7 +22,6 @@ class EnDeCryption {
   }
   bool isPasswordCorrect(String enteredPassword, String base16Encrypted) {
     String decryptedPassword = EnDeCryption().decryptWithAES(Encrypted.fromBase16(base16Encrypted));
-    print(decryptedPassword);
     if(enteredPassword==decryptedPassword){
       return true;
     } else {

@@ -309,7 +309,7 @@ class RadioListBuilderState extends State<RadioListBuilder> {
     }
   }
 
-  void saveLanguage() {
+  void _saveLanguage() {
     if (_isRadioSelected) {
       context.setLocale(const Locale('az', 'Latn'));
     } else {
@@ -360,7 +360,7 @@ class RadioListBuilderState extends State<RadioListBuilder> {
           borderRadius: 15,
           horizontalMargin: 20,
           onTap: () {
-            saveLanguage();
+            _saveLanguage();
             language.onLanguageChanged();
           },
           borderColor: AppColors.primaryColorOfApp,

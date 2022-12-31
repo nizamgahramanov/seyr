@@ -61,7 +61,7 @@ class _ChangeEmailScreenState extends State<ChangeEmailScreen> {
     _emailController = TextEditingController(text: widget.email);
   }
 
-  void saveForm() {
+  void _saveForm() {
     FocusScope.of(context).unfocus();
     _changeEmailForm.currentState!.save();
   }
@@ -78,13 +78,14 @@ class _ChangeEmailScreenState extends State<ChangeEmailScreen> {
           enteredEmail,
           enteredPassword,
         );
-        Navigator.push(
+        Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
             builder: (context) => MainScreen(
               bottomNavIndex: 3,
             ),
           ),
+          (Route<dynamic> route) => false,
         );
       } else {
         Utility.getInstance().showAlertDialog(
@@ -184,7 +185,7 @@ class _ChangeEmailScreenState extends State<ChangeEmailScreen> {
                               : const Icon(Icons.remove_red_eye),
                         ),
                         onChanged: (value) => checkIfEmailChanged(value),
-                        onFieldSubmitted: (_) => saveForm(),
+                        onFieldSubmitted: (_) => _saveForm(),
                         onSaved: (_) => saveEmailChange(),
                       ),
                     ],
@@ -201,7 +202,7 @@ class _ChangeEmailScreenState extends State<ChangeEmailScreen> {
               borderRadius: 15,
               horizontalMargin: 20,
               verticalMargin: 5,
-              onTap: () => saveForm(),
+              onTap: ()=>_saveForm(),
               borderColor: AppColors.primaryColorOfApp,
             )
           : null,

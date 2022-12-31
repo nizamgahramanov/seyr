@@ -26,18 +26,27 @@ class _UserInfoState extends State<UserInfo> {
   final _firstnameFocusNode = FocusNode();
   final TextEditingController _firstnameController = TextEditingController();
   final TextEditingController _lastnameController = TextEditingController();
-  bool _isShowSaveButton = false;
+  bool _isShowDoneButton = false;
+  bool _isDisableDoneButton = false;
 
-  void checkIfNameChanged(String text) {
+  void _checkIfNameChanged(String text) {
     if (_firstnameController.text != '' && _lastnameController.text != '') {
       setState(() {
-        _isShowSaveButton = true;
+        _isShowDoneButton = true;
       });
     } else {
       setState(() {
-        _isShowSaveButton = false;
+        _isShowDoneButton = false;
       });
     }
+  }
+
+  void _saveForm() {
+    setState(() {
+      _isDisableDoneButton=true;
+    });
+    FocusScope.of(context).unfocus();
+    _form.currentState!.save();
   }
 
   @override
@@ -52,6 +61,9 @@ class _UserInfoState extends State<UserInfo> {
     final args = ModalRoute.of(context)!.settings.arguments as UserCredentials;
 
     void _redirectUserToProfileScreen() {
+      setState(() {
+        _isDisableDoneButton=false;
+      });
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
@@ -64,7 +76,7 @@ class _UserInfoState extends State<UserInfo> {
     }
 
     void _registerUser() async {
-      if (_isShowSaveButton) {
+      if (_isShowDoneButton) {
         await AuthService().registerUser(
           context: context,
           firstName: _firstnameController.text,
@@ -74,11 +86,6 @@ class _UserInfoState extends State<UserInfo> {
         );
         _redirectUserToProfileScreen();
       }
-    }
-
-    void saveForm() {
-      FocusScope.of(context).unfocus();
-      _form.currentState!.save();
     }
 
     return Scaffold(
@@ -120,7 +127,7 @@ class _UserInfoState extends State<UserInfo> {
                           keyboardType: TextInputType.name,
                           textInputAction: TextInputAction.next,
                           focusNode: _firstnameFocusNode,
-                          onChanged: (value) => checkIfNameChanged(value),
+                          onChanged: (value) => _checkIfNameChanged(value),
                           onFieldSubmitted: (_) => FocusScope.of(context)
                               .requestFocus(_lastnameFocusNode),
                         ),
@@ -147,8 +154,8 @@ class _UserInfoState extends State<UserInfo> {
                         controller: _lastnameController,
                         keyboardType: TextInputType.name,
                         focusNode: _lastnameFocusNode,
-                        onChanged: (value) => checkIfNameChanged(value),
-                        onFieldSubmitted: (_) => saveForm(),
+                        onChanged: (value) => _checkIfNameChanged(value),
+                        onFieldSubmitted: (_) => _saveForm(),
                         textInputAction: TextInputAction.done,
                         onSaved: (_) => _registerUser(),
                       )
@@ -160,13 +167,13 @@ class _UserInfoState extends State<UserInfo> {
           ],
         ),
       ),
-      floatingActionButton: _isShowSaveButton
+      floatingActionButton: _isShowDoneButton
           ? CustomButton(
               buttonText: 'done_btn'.tr(),
               borderRadius: 15,
               horizontalMargin: 20,
               verticalMargin: 5,
-              onTap: saveForm,
+              onTap: _isDisableDoneButton ? () {} : _saveForm,
               borderColor: AppColors.primaryColorOfApp,
             )
           : null,

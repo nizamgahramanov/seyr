@@ -22,7 +22,6 @@ class Destinations with ChangeNotifier {
 
   void saveData(BuildContext context, Destination newDestination,
       List<File?> destinationPhoto) async {
-    print(newDestination.createMap().toString());
     final urlList = await storage_service.saveDestinationImages(
         context, newDestination, destinationPhoto);
     newDestination.photoUrl = urlList;
