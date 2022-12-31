@@ -12,6 +12,7 @@ class AppLightText extends StatelessWidget {
   final double spacing;
   final FontWeight? fontWeight;
   final TextAlign textAlign;
+  final int? maxLines;
   AppLightText({
     Key? key,
     this.size = 16,
@@ -23,7 +24,8 @@ class AppLightText extends StatelessWidget {
     required this.padding,
     this.spacing=0,
     this.fontWeight = FontWeight.normal,
-    this.textAlign = TextAlign.center
+    this.textAlign = TextAlign.center,
+    this.maxLines
   }) : super(key: key);
 
   @override
@@ -42,6 +44,7 @@ class AppLightText extends StatelessWidget {
               textAlign: textAlign,
               overflow: TextOverflow.fade,
               text,
+              maxLines: maxLines,
               style: TextStyle(
                 color: color,
                 fontSize: size,

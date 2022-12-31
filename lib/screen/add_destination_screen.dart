@@ -157,7 +157,6 @@ class _AddDestinationScreenState extends State<AddDestinationScreen> {
                             }
                             return null;
                           },
-                          // onChanged: (value) => checkIfChanged(value),
                           onFieldSubmitted: (_) => FocusScope.of(context)
                               .requestFocus(_overviewFocusNode),
                         ),

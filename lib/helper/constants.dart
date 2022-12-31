@@ -12,7 +12,7 @@ const noResultFoundImage= "assets/svg/no_result_found.svg";
 const lowerCasePattern = "(?=.*[a-z])";
 const upperCasePattern = "(?=.*[A-Z])";
 
-const algoliaAppId= "MIXLQ70OML";
-const algoliaApiKey= "110626843589be72cf0163bf9c36b01b";
+const algoliaAppId= "VP64ATWYSZ";
+const algoliaApiKey= "cd6ba904091dc91cfd8f7e6109d44127";
 const googleApiKey = "AIzaSyCKKDpOsBrKzIaD8PqMqeXC0FXiF_KY8GY";
 const googleBasePart = "https://maps.googleapis.com/maps/api/";

@@ -51,14 +51,16 @@ class _DetailScreenState extends State<DetailScreen>
             'please_sign_up_before_make_favorite_dialog_msg_subtitle'.tr(),
         actionButtonText: 'sign_up_btn'.tr(),
         actionButtonColor: AppColors.primaryColorOfApp,
-        onTapAction: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MainScreen(
-              bottomNavIndex: 3,
+        onTapAction: () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MainScreen(
+                bottomNavIndex: 3,
+              ),
             ),
-          ),
-        ),
+          );
+        },
       );
     }
   }
