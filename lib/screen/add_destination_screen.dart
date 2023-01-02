@@ -61,27 +61,29 @@ class _AddDestinationScreenState extends State<AddDestinationScreen> {
     _addDestinationForm.currentState!.save();
     try {
       if (_destinationImageFile.isNotEmpty) {
-        var currentUser = FirebaseAuth.instance.currentUser;
-        var userData = await FireStoreService().getUserByUid(currentUser!.uid);
-        var destinationItem = Destination(
-            id: const Uuid().v4(),
-            name: _nameController.text,
-            overview: _overviewController.text,
-            overviewAz: _overviewAzController.text,
-            region: _regionController.text,
-            regionAz: _regionAzController.text,
-            category: dropdownValue,
-            photoUrl: _destinationImageFile,
-            author:
-                '${userData!['firstName'].trim()} ${userData['lastName'].trim()}',
-            geoPoint: _destinationLocation != null
-                ? GeoPoint(
-                    _destinationLocation!.latitude,
-                    _destinationLocation!.longitude,
-                  )
-                : null);
+        User? currentUser = FirebaseAuth.instance.currentUser;
+        if(currentUser!=null){
+          DocumentReference userRef = FirebaseFirestore.instance.collection("users").doc(currentUser.uid);
+          var destinationItem = Destination(
+              id: const Uuid().v4(),
+              name: _nameController.text,
+              overview: _overviewController.text,
+              overviewAz: _overviewAzController.text,
+              region: _regionController.text,
+              regionAz: _regionAzController.text,
+              category: dropdownValue,
+              photoUrl: _destinationImageFile,
+              user: userRef,
+              geoPoint: _destinationLocation != null
+                  ? GeoPoint(
+                _destinationLocation!.latitude,
+                _destinationLocation!.longitude,
+              )
+                  : null);
 
-        saveDestinationItem(destinationItem);
+          saveDestinationItem(destinationItem);
+        }
+
       }
     } catch (error) {
       Utility.getInstance().showAlertDialog(

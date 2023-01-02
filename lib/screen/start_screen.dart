@@ -60,6 +60,10 @@ class _StartScreenState extends State<StartScreen> {
         ExactAssetPicture(SvgPicture.svgStringDecoderBuilder, offlineImage),
         null,
       ),
+      precachePicture(
+        ExactAssetPicture(SvgPicture.svgStringDecoderBuilder, errorImage),
+        null,
+      ),
     ]);
   }
 

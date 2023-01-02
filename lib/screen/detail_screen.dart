@@ -8,6 +8,7 @@ import 'package:seyr/helper/app_colors.dart';
 import 'package:seyr/helper/constants.dart';
 import 'package:seyr/helper/custom_icon_text.dart';
 import 'package:seyr/helper/utility.dart';
+import 'package:seyr/model/firestore_user.dart';
 import 'package:seyr/screen/main_screen.dart';
 import 'package:seyr/screen/maps_screen.dart';
 import 'package:seyr/service/firebase_firestore_service.dart';
@@ -292,26 +293,56 @@ class _DetailScreenState extends State<DetailScreen>
                                 AppLightText(
                                   text: 'by_msg'.tr(),
                                   padding: EdgeInsets.zero,
-                                  spacing: 0,
                                   size: 8,
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.primaryColorOfApp,
                                 ),
-                              AppLightText(
-                                text: clickedDestination.author,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 5,
-                                ),
-                                spacing: 0,
-                                size: 12,
-                                fontWeight: FontWeight.normal,
-                                color: AppColors.primaryColorOfApp,
-                              ),
+                              StreamBuilder<DocumentSnapshot>(
+                                  stream: clickedDestination.user.snapshots(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return AppLightText(
+                                        text: 'loading_msg'.tr(),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 5,
+                                        ),
+                                      );
+                                    } else if (snapshot.connectionState ==
+                                            ConnectionState.none ||
+                                        snapshot.connectionState ==
+                                            ConnectionState.active) {
+                                      if (snapshot.hasError) {
+                                        return AppLightText(
+                                          text: "oops_error_title".tr(),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 5,
+                                          ),
+                                        );
+                                      } else {
+                                        return AppLightText(
+                                          text: '${snapshot.data!["firstName"]} ${snapshot.data!["lastName"]}',
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 5,
+                                          ),
+                                          size: 12,
+                                          fontWeight: FontWeight.normal,
+                                          color: AppColors.primaryColorOfApp,
+                                        );
+                                      }
+                                    } else {
+                                      return AppLightText(
+                                        text: "oops_error_title".tr(),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 5,
+                                        ),
+                                      );
+                                    }
+                                  }),
                               if (locale == 'az')
                                 AppLightText(
                                   text: 'by_msg'.tr(),
                                   padding: EdgeInsets.zero,
-                                  spacing: 0,
                                   size: 8,
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.primaryColorOfApp,
@@ -323,7 +354,6 @@ class _DetailScreenState extends State<DetailScreen>
                             color: AppColors.blackColor,
                             size: 22,
                             fontWeight: FontWeight.bold,
-                            spacing: 2,
                             padding: EdgeInsets.zero,
                           ),
                           const SizedBox(

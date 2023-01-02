@@ -73,7 +73,6 @@ class _LoginWithPasswordScreenState extends State<LoginWithPasswordScreen> {
 
   void _checkPasswordCorrect(context, email, enteredPassword) async {
     if (_isShowDoneButton) {
-      print("CIKCEKSD");
       setState(() {
         _isDisableContinueButton=true;
       });

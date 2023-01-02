@@ -26,8 +26,6 @@ class FavoriteScreen extends StatelessWidget {
           ? ErrorAndNoNetworkAndFavoriteScreen(
               text: 'no_favorites_yet_info'.tr(),
               path: noFavoriteScreenImage,
-              //       width: 300,
-              // height: 300,
             )
           : SafeArea(
               child: Padding(
@@ -45,16 +43,12 @@ class FavoriteScreen extends StatelessWidget {
                         return ErrorAndNoNetworkAndFavoriteScreen(
                             text: "something_went_wrong_error_msg".tr(),
                             path: errorImage
-                            // width: 300,
-                            // height: 300,
                             );
                       } else {
                         if (snapshot.hasData && snapshot.data!.isEmpty) {
                           return ErrorAndNoNetworkAndFavoriteScreen(
                             text: 'no_favorites_yet_info'.tr(),
                             path: noFavoriteScreenImage,
-                            // width: 300,
-                            // height: 300,
                           );
                         } else {
                           return MasonryGridView.count(
@@ -77,7 +71,7 @@ class FavoriteScreen extends StatelessWidget {
                                       regionAz: snapshot.data![index].regionAz,
                                       category: snapshot.data![index].category,
                                       photoUrl: snapshot.data![index].photoUrl,
-                                      author: snapshot.data![index].author,
+                                      user: snapshot.data![index].user,
                                       geoPoint: snapshot.data![index].geoPoint,
                                     ),
                                   );
