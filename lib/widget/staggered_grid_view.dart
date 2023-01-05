@@ -88,7 +88,7 @@ class _StaggeredGridViewState extends State<StaggeredGridView>
                     ),
                   ),
                   const SizedBox(
-                    height: 20,
+                    height: 0.5,
                   ),
                   Expanded(
                     child: TabBarView(
