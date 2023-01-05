@@ -133,8 +133,6 @@ class _DetailScreenState extends State<DetailScreen>
                     top: 5,
                     bottom: 5,
                   ),
-                  // width: 60,
-                  // color: Colors.redAccent,
                   child: TextButton(
                     onPressed: () => Navigator.pop(context),
                     style: ElevatedButton.styleFrom(
@@ -211,7 +209,7 @@ class _DetailScreenState extends State<DetailScreen>
                 floating: true,
                 pinned: true,
                 flexibleSpace: FlexibleSpaceBar(
-                  expandedTitleScale: 1.8,
+                  expandedTitleScale: 1.5,
                   collapseMode: CollapseMode.parallax,
                   titlePadding: _innerListIsScrolled
                       ? const EdgeInsets.symmetric(
@@ -229,21 +227,20 @@ class _DetailScreenState extends State<DetailScreen>
                     children: [
                       AppLightText(
                         text: clickedDestination.name,
-                        size: 16,
+                        size: 15,
                         color: AppColors.backgroundColorOfApp,
                         fontWeight: FontWeight.bold,
-                        spacing: 2,
                         padding: EdgeInsets.zero,
                       ),
                       CustomIconText(
                         text: locale == 'az'
                             ? clickedDestination.regionAz
                             : clickedDestination.region,
-                        size: 12,
+                        size: 11,
                         color: AppColors.backgroundColorOfApp,
                         icon: const Icon(
                           Icons.location_on_outlined,
-                          size: 12,
+                          size: 11,
                           color: AppColors.backgroundColorOfApp,
                         ),
                         spacing: 3,

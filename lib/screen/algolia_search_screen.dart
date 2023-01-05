@@ -180,7 +180,7 @@ class _AlgoliaSearchScreenState extends State<AlgoliaSearchScreen> {
                                           regionAz: algolia.data['region_az'],
                                           category: algolia.data['category'],
                                           photoUrl: algolia.data['photo_url'],
-                                          user: algolia.data['user'],
+                                          user: FirebaseFirestore.instance.doc(algolia.data['user']),
                                           geoPoint: algolia.data['_geoloc'] != null
                                               ? GeoPoint(
                                             algolia.data['_geoloc']['lat'],

@@ -13,8 +13,6 @@ class Destinations with ChangeNotifier {
   final List<Destination> _destinationItems = [];
   Stream<List<Destination>> get destinationItemsAll {
     final allDestination = firestore_service.getDestinations();
-    print("ALL");
-    print(allDestination);
     return allDestination;
   }
 
