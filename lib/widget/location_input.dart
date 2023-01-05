@@ -6,8 +6,10 @@ import 'package:location/location.dart';
 import 'package:seyr/helper/app_light_text.dart';
 import 'package:seyr/helper/custom_button.dart';
 
+import '../exception/custom_auth_exception.dart';
 import '../helper/app_colors.dart';
 import '../helper/location_helper.dart';
+import '../helper/utility.dart';
 import '../screen/maps_screen.dart';
 
 class LocationInput extends StatefulWidget {
@@ -28,7 +30,15 @@ class _LocationInputState extends State<LocationInput> {
       showPreview(locData.latitude!, locData.longitude!);
       widget.onSelectPlace(locData.latitude, locData.longitude);
     } catch (error) {
-      print(error.toString());
+      Utility.getInstance().showAlertDialog(
+        context: context,
+        alertTitle: 'oops_error_title'.tr(),
+        alertMessage: 'unknown_error_msg'.tr(),
+        popButtonText: 'ok_btn'.tr(),
+        popButtonColor: AppColors.redAccent300,
+        onPopTap: () => Navigator.of(context).pop(),
+      );
+      throw CustomException(ctx: context, errorMessage: "Unknown Error");
     }
   }
 

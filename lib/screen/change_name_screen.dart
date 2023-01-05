@@ -29,7 +29,9 @@ class _ChangeNameScreenState extends State<ChangeNameScreen>
   final _firstnameFocusNode = FocusNode();
   TextEditingController? _firstnameController;
   TextEditingController? _lastnameController;
-  bool _isShowSaveButton = false;
+  bool _isShowDoneButton = false;
+  bool _isDisableDoneButton = false;
+
   @override
   void initState() {
     super.initState();
@@ -44,37 +46,44 @@ class _ChangeNameScreenState extends State<ChangeNameScreen>
     super.dispose();
   }
 
-  void saveNameChange() {
-    if (_isShowSaveButton) {
+  void _saveNameChange() {
+    if (_isShowDoneButton) {
       String? changedFirstName = _firstnameController?.text;
       String? changedLastName = _lastnameController?.text;
       AuthService().updateUserName(context, changedFirstName, changedLastName);
-      Navigator.push(
+      setState(() {
+        _isDisableDoneButton = false;
+      });
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
           builder: (context) => MainScreen(
             bottomNavIndex: 3,
           ),
         ),
+        (Route<dynamic> route) => false,
       );
     }
   }
 
-  void checkIfNameChanged(String text) {
+  void _checkIfNameChanged(String text) {
     if ((widget.firstName != _firstnameController?.text ||
             widget.lastName != _lastnameController?.text) &&
         (_firstnameController?.text != '' && _lastnameController?.text != '')) {
       setState(() {
-        _isShowSaveButton = true;
+        _isShowDoneButton = true;
       });
     } else {
       setState(() {
-        _isShowSaveButton = false;
+        _isShowDoneButton = false;
       });
     }
   }
 
-  void saveForm() {
+  void _saveForm() {
+    setState(() {
+      _isDisableDoneButton = true;
+    });
     FocusScope.of(context).unfocus();
     _changeNameForm.currentState!.save();
   }
@@ -121,7 +130,7 @@ class _ChangeNameScreenState extends State<ChangeNameScreen>
                           textInputAction: TextInputAction.next,
                           keyboardType: TextInputType.name,
                           focusNode: _firstnameFocusNode,
-                          onChanged: (value) => checkIfNameChanged(value),
+                          onChanged: (value) => _checkIfNameChanged(value),
                           onFieldSubmitted: (_) => FocusScope.of(context)
                               .requestFocus(_lastnameFocusNode),
                         ),
@@ -149,9 +158,9 @@ class _ChangeNameScreenState extends State<ChangeNameScreen>
                         focusNode: _lastnameFocusNode,
                         keyboardType: TextInputType.name,
                         textInputAction: TextInputAction.done,
-                        onChanged: (value) => checkIfNameChanged(value),
-                        onFieldSubmitted: (_) => saveForm(),
-                        onSaved: (_) => saveNameChange(),
+                        onChanged: (value) => _checkIfNameChanged(value),
+                        onFieldSubmitted: (_) => _saveForm(),
+                        onSaved: (_) => _saveNameChange(),
                       )
                     ],
                   ),
@@ -161,13 +170,13 @@ class _ChangeNameScreenState extends State<ChangeNameScreen>
           ],
         ),
       ),
-      floatingActionButton: _isShowSaveButton
+      floatingActionButton: _isShowDoneButton
           ? CustomButton(
               buttonText: 'done_btn'.tr(),
               borderRadius: 15,
               horizontalMargin: 20,
               verticalMargin: 5,
-              onTap: () => saveForm(),
+              onTap: _isDisableDoneButton ? () {} : _saveForm,
               borderColor: AppColors.primaryColorOfApp,
             )
           : null,
@@ -175,32 +184,3 @@ class _ChangeNameScreenState extends State<ChangeNameScreen>
     );
   }
 }
-
-//FAB button
-// class NoScalingAnimation extends FloatingActionButtonAnimator {
-//   double? _x;
-//   double? _y;
-//   @override
-//   Offset getOffset(
-//       {required Offset begin, required Offset end, required double progress}) {
-//     _x = begin.dx + (end.dx - begin.dx) * progress;
-//     _y = begin.dy + (end.dy - begin.dy) * progress;
-//     'x offset');
-//     _x);
-//     'y offset');
-//     _y);
-//     return end;
-//   }
-//
-//   @override
-//   Animation<double> getRotationAnimation({required Animation<double> parent}) {
-//     'getRotationAnimation');
-//     return Tween<double>(begin: 0.5, end: 1.0).animate(parent);
-//   }
-//
-//   @override
-//   Animation<double> getScaleAnimation({required Animation<double> parent}) {
-//     'getScaleAnimation');
-//     return Tween<double>(begin: 1.0, end: 1.0).animate(parent);
-//   }
-// }

@@ -53,6 +53,7 @@ class FireStoreService {
         .toList());
   }
 
+  //not used method
   Stream<List<Destination>> getDestinationsBySearchText(String enteredText) {
     return _db
         .collection('destinations')
@@ -64,10 +65,8 @@ class FireStoreService {
             .toList());
   }
 
-  //This method is used to create the user in firestore
   Future<void> createUserInFirestore(String uid, String? firstName,
       String? lastName, String email, String? password) async {
-    //Encrypts password before store in firestore
     String? encryptedPassword;
     if (password != null) {
       encryptedPassword = EnDeCryption().encryptWithAES(password).base16;
@@ -78,8 +77,6 @@ class FireStoreService {
       lastName: lastName,
       password: encryptedPassword,
     );
-    //Creates the user doc named whatever the user uid is in the collection "users"
-    //and adds the user data
     await _db.collection("users").doc(uid).set(firestoreUserItem.createMap());
   }
 
@@ -136,11 +133,11 @@ class FireStoreService {
             .toList());
   }
 
-  updateUserName(String? firstName, String? lastName, String? uid) {
+  updateUserName(String? firstName, String? lastName, String? uid) async {
     if (uid != null) {
-      DocumentReference docRef = _db.collection('users').doc(uid);
+      DocumentReference docRefUsers = _db.collection('users').doc(uid);
       var batch = _db.batch();
-      batch.update(docRef, {'firstName': firstName, 'lastName': lastName});
+      batch.update(docRefUsers, {'firstName': firstName, 'lastName': lastName});
       batch.commit();
     }
   }

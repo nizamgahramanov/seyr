@@ -8,6 +8,7 @@ import 'package:seyr/helper/app_colors.dart';
 import 'package:seyr/helper/constants.dart';
 import 'package:seyr/helper/custom_icon_text.dart';
 import 'package:seyr/helper/utility.dart';
+import 'package:seyr/model/firestore_user.dart';
 import 'package:seyr/screen/main_screen.dart';
 import 'package:seyr/screen/maps_screen.dart';
 import 'package:seyr/service/firebase_firestore_service.dart';
@@ -132,8 +133,6 @@ class _DetailScreenState extends State<DetailScreen>
                     top: 5,
                     bottom: 5,
                   ),
-                  // width: 60,
-                  // color: Colors.redAccent,
                   child: TextButton(
                     onPressed: () => Navigator.pop(context),
                     style: ElevatedButton.styleFrom(
@@ -177,39 +176,25 @@ class _DetailScreenState extends State<DetailScreen>
                             snapshot.connectionState ==
                                 ConnectionState.active) {
                           if (snapshot.hasError) {
-                            return ErrorAndNoNetworkAndFavoriteScreen(
-                              text: 'something_went_wrong_error_msg'.tr(),
-                              path: errorImage,
+                            return _buildTextButton(
+                              () {},
+                              const Icon(
+                                Icons.error_outline_outlined,
+                                color: AppColors.backgroundColorOfApp,
+                              ),
                             );
                           } else {
-                            return Container(
-                              // color: Colors.redAccent,
-                              width: 50,
-                              margin: const EdgeInsets.only(
-                                right: 20,
-                                left: 5,
-                                top: 5,
-                                bottom: 5,
-                              ),
-                              child: TextButton(
-                                onPressed: () =>
-                                    toggleFavorite(clickedDestination),
-                                style: ElevatedButton.styleFrom(
-                                  shape: const CircleBorder(),
-                                  padding: EdgeInsets.zero,
-                                  primary: AppColors.primaryColorOfApp,
-                                ),
-                                child: !snapshot.hasData ||
-                                        snapshot.data!.docs.isEmpty
-                                    ? const Icon(
-                                        Icons.favorite_border_outlined,
-                                        color: AppColors.backgroundColorOfApp,
-                                      )
-                                    : const Icon(
-                                        Icons.favorite,
-                                        color: AppColors.backgroundColorOfApp,
-                                      ),
-                              ),
+                            return _buildTextButton(
+                              () => toggleFavorite(clickedDestination),
+                              !snapshot.hasData || snapshot.data!.docs.isEmpty
+                                  ? const Icon(
+                                      Icons.favorite_border_outlined,
+                                      color: AppColors.backgroundColorOfApp,
+                                    )
+                                  : const Icon(
+                                      Icons.favorite,
+                                      color: AppColors.backgroundColorOfApp,
+                                    ),
                             );
                           }
                         } else {
@@ -224,8 +209,7 @@ class _DetailScreenState extends State<DetailScreen>
                 floating: true,
                 pinned: true,
                 flexibleSpace: FlexibleSpaceBar(
-                  // titlePadding: EdgeInsets.zero,
-                  expandedTitleScale: 1.8,
+                  expandedTitleScale: 1.5,
                   collapseMode: CollapseMode.parallax,
                   titlePadding: _innerListIsScrolled
                       ? const EdgeInsets.symmetric(
@@ -243,21 +227,20 @@ class _DetailScreenState extends State<DetailScreen>
                     children: [
                       AppLightText(
                         text: clickedDestination.name,
-                        size: 16,
+                        size: 15,
                         color: AppColors.backgroundColorOfApp,
                         fontWeight: FontWeight.bold,
-                        spacing: 2,
                         padding: EdgeInsets.zero,
                       ),
                       CustomIconText(
                         text: locale == 'az'
                             ? clickedDestination.regionAz
                             : clickedDestination.region,
-                        size: 12,
+                        size: 11,
                         color: AppColors.backgroundColorOfApp,
                         icon: const Icon(
                           Icons.location_on_outlined,
-                          size: 12,
+                          size: 11,
                           color: AppColors.backgroundColorOfApp,
                         ),
                         spacing: 3,
@@ -307,41 +290,67 @@ class _DetailScreenState extends State<DetailScreen>
                                 AppLightText(
                                   text: 'by_msg'.tr(),
                                   padding: EdgeInsets.zero,
-                                  spacing: 0,
                                   size: 8,
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.primaryColorOfApp,
                                 ),
-                              AppLightText(
-                                text: clickedDestination.author,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 5,
-                                ),
-                                spacing: 0,
-                                size: 12,
-                                fontWeight: FontWeight.normal,
-                                color: AppColors.primaryColorOfApp,
-                              ),
+                              StreamBuilder<DocumentSnapshot>(
+                                  stream: clickedDestination.user.snapshots(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return AppLightText(
+                                        text: 'loading_msg'.tr(),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 5,
+                                        ),
+                                      );
+                                    } else if (snapshot.connectionState ==
+                                            ConnectionState.none ||
+                                        snapshot.connectionState ==
+                                            ConnectionState.active) {
+                                      if (snapshot.hasError) {
+                                        return AppLightText(
+                                          text: "oops_error_title".tr(),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 5,
+                                          ),
+                                        );
+                                      } else {
+                                        return AppLightText(
+                                          text: '${snapshot.data!["firstName"]} ${snapshot.data!["lastName"]}',
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 5,
+                                          ),
+                                          size: 12,
+                                          fontWeight: FontWeight.normal,
+                                          color: AppColors.primaryColorOfApp,
+                                        );
+                                      }
+                                    } else {
+                                      return AppLightText(
+                                        text: "oops_error_title".tr(),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 5,
+                                        ),
+                                      );
+                                    }
+                                  }),
                               if (locale == 'az')
                                 AppLightText(
                                   text: 'by_msg'.tr(),
                                   padding: EdgeInsets.zero,
-                                  spacing: 0,
                                   size: 8,
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.primaryColorOfApp,
                                 ),
                             ],
                           ),
-                          // const SizedBox(
-                          //   height: 15,
-                          // ),
                           AppLightText(
                             text: 'overview'.tr(),
                             color: AppColors.blackColor,
                             size: 22,
                             fontWeight: FontWeight.bold,
-                            spacing: 2,
                             padding: EdgeInsets.zero,
                           ),
                           const SizedBox(
@@ -376,6 +385,28 @@ class _DetailScreenState extends State<DetailScreen>
             )
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+    );
+  }
+
+  Widget _buildTextButton(VoidCallback? onPressed, Widget child) {
+    return Container(
+      // color: Colors.redAccent,
+      width: 50,
+      margin: const EdgeInsets.only(
+        right: 20,
+        left: 5,
+        top: 5,
+        bottom: 5,
+      ),
+      child: TextButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          shape: const CircleBorder(),
+          padding: EdgeInsets.zero,
+          primary: AppColors.primaryColorOfApp,
+        ),
+        child: child,
+      ),
     );
   }
 }

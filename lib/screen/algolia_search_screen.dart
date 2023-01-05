@@ -166,35 +166,35 @@ class _AlgoliaSearchScreenState extends State<AlgoliaSearchScreen> {
                                 crossAxisSpacing: 12,
                                 mainAxisSpacing: 12,
                                 itemBuilder: (context, index) {
-                                  AlgoliaObjectSnapshot snap = _results![index];
+                                  AlgoliaObjectSnapshot algolia = _results![index];
                                   return GestureDetector(
                                     onTap: () {
                                       Navigator.of(context).pushNamed(
                                         DetailScreen.routeName,
                                         arguments: Destination(
-                                          id: snap.data['id'],
-                                          name: snap.data['name'],
-                                          overview: snap.data['overview'],
-                                          overviewAz: snap.data['overview_az'],
-                                          region: snap.data['region'],
-                                          regionAz: snap.data['region_az'],
-                                          category: snap.data['category'],
-                                          photoUrl: snap.data['photo_url'],
-                                          author: snap.data['author'],
-                                          geoPoint: snap.data['_geoloc'] != null
+                                          id: algolia.data['id'],
+                                          name: algolia.data['name'],
+                                          overview: algolia.data['overview'],
+                                          overviewAz: algolia.data['overview_az'],
+                                          region: algolia.data['region'],
+                                          regionAz: algolia.data['region_az'],
+                                          category: algolia.data['category'],
+                                          photoUrl: algolia.data['photo_url'],
+                                          user: FirebaseFirestore.instance.doc(algolia.data['user']),
+                                          geoPoint: algolia.data['_geoloc'] != null
                                               ? GeoPoint(
-                                                  snap.data['_geoloc']['lat'],
-                                                  snap.data['_geoloc']['lng'],
+                                            algolia.data['_geoloc']['lat'],
+                                            algolia.data['_geoloc']['lng'],
                                                 )
                                               : null,
                                         ),
                                       );
                                     },
                                     child: StaggeredGridItem(
-                                      name: snap.data['name'],
-                                      region: snap.data['region'],
-                                      regionAz: snap.data['region_az'],
-                                      photo: snap.data['photo_url'][0],
+                                      name: algolia.data['name'],
+                                      region: algolia.data['region'],
+                                      regionAz: algolia.data['region_az'],
+                                      photo: algolia.data['photo_url'][0],
                                     ),
                                   );
                                 },

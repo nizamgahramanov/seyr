@@ -61,27 +61,29 @@ class _AddDestinationScreenState extends State<AddDestinationScreen> {
     _addDestinationForm.currentState!.save();
     try {
       if (_destinationImageFile.isNotEmpty) {
-        var currentUser = FirebaseAuth.instance.currentUser;
-        var userData = await FireStoreService().getUserByUid(currentUser!.uid);
-        var destinationItem = Destination(
-            id: const Uuid().v4(),
-            name: _nameController.text,
-            overview: _overviewController.text,
-            overviewAz: _overviewAzController.text,
-            region: _regionController.text,
-            regionAz: _regionAzController.text,
-            category: dropdownValue,
-            photoUrl: _destinationImageFile,
-            author:
-                '${userData!['firstName'].trim()} ${userData['lastName'].trim()}',
-            geoPoint: _destinationLocation != null
-                ? GeoPoint(
-                    _destinationLocation!.latitude,
-                    _destinationLocation!.longitude,
-                  )
-                : null);
+        User? currentUser = FirebaseAuth.instance.currentUser;
+        if(currentUser!=null){
+          DocumentReference userRef = FirebaseFirestore.instance.collection("users").doc(currentUser.uid);
+          var destinationItem = Destination(
+              id: const Uuid().v4(),
+              name: _nameController.text,
+              overview: _overviewController.text,
+              overviewAz: _overviewAzController.text,
+              region: _regionController.text,
+              regionAz: _regionAzController.text,
+              category: dropdownValue,
+              photoUrl: _destinationImageFile,
+              user: userRef,
+              geoPoint: _destinationLocation != null
+                  ? GeoPoint(
+                _destinationLocation!.latitude,
+                _destinationLocation!.longitude,
+              )
+                  : null);
 
-        saveDestinationItem(destinationItem);
+          saveDestinationItem(destinationItem);
+        }
+
       }
     } catch (error) {
       Utility.getInstance().showAlertDialog(
@@ -149,7 +151,7 @@ class _AddDestinationScreenState extends State<AddDestinationScreen> {
                         child: CustomTextFormField(
                           controller: _nameController,
                           textInputAction: TextInputAction.next,
-                          keyboardType: TextInputType.emailAddress,
+                          keyboardType: TextInputType.name,
                           focusNode: _nameFocusNode,
                           validator: (value) {
                             if (value!.isEmpty) {
@@ -158,7 +160,7 @@ class _AddDestinationScreenState extends State<AddDestinationScreen> {
                             return null;
                           },
                           onFieldSubmitted: (_) => FocusScope.of(context)
-                              .requestFocus(_overviewFocusNode),
+                              .requestFocus(_overviewAzFocusNode),
                         ),
                       ),
                     ],
@@ -191,7 +193,7 @@ class _AddDestinationScreenState extends State<AddDestinationScreen> {
                           return null;
                         },
                         onFieldSubmitted: (_) => FocusScope.of(context)
-                            .requestFocus(_regionFocusNode),
+                            .requestFocus(_overviewFocusNode),
                       ),
                     ],
                   ),
@@ -214,7 +216,7 @@ class _AddDestinationScreenState extends State<AddDestinationScreen> {
                       CustomTextFormField(
                         controller: _overviewController,
                         textInputAction: TextInputAction.next,
-                        keyboardType: TextInputType.text,
+                        keyboardType: TextInputType.name,
                         focusNode: _overviewFocusNode,
                         validator: (value) {
                           if (value!.isEmpty) {
@@ -223,7 +225,7 @@ class _AddDestinationScreenState extends State<AddDestinationScreen> {
                           return null;
                         },
                         onFieldSubmitted: (_) => FocusScope.of(context)
-                            .requestFocus(_overviewAzFocusNode),
+                            .requestFocus(_regionAzFocusNode),
                       ),
                     ],
                   ),
@@ -246,7 +248,7 @@ class _AddDestinationScreenState extends State<AddDestinationScreen> {
                       CustomTextFormField(
                         controller: _regionAzController,
                         textInputAction: TextInputAction.next,
-                        keyboardType: TextInputType.text,
+                        keyboardType: TextInputType.name,
                         focusNode: _regionAzFocusNode,
                         validator: (value) {
                           if (value!.isEmpty) {
@@ -255,7 +257,7 @@ class _AddDestinationScreenState extends State<AddDestinationScreen> {
                           return null;
                         },
                         onFieldSubmitted: (_) => FocusScope.of(context)
-                            .requestFocus(_regionAzFocusNode),
+                            .requestFocus(_regionFocusNode),
                       ),
                     ],
                   ),
@@ -278,7 +280,7 @@ class _AddDestinationScreenState extends State<AddDestinationScreen> {
                       CustomTextFormField(
                         controller: _regionController,
                         textInputAction: TextInputAction.next,
-                        keyboardType: TextInputType.text,
+                        keyboardType: TextInputType.name,
                         focusNode: _regionFocusNode,
                         validator: (value) {
                           if (value!.isEmpty) {
@@ -286,8 +288,7 @@ class _AddDestinationScreenState extends State<AddDestinationScreen> {
                           }
                           return null;
                         },
-                        onFieldSubmitted: (_) => FocusScope.of(context)
-                            .requestFocus(_regionAzFocusNode),
+                        onFieldSubmitted: (_) {},
                       ),
                     ],
                   ),

@@ -4,6 +4,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:seyr/helper/app_colors.dart';
 import 'package:seyr/helper/custom_tab_indicator.dart';
+import 'package:seyr/model/firestore_user.dart';
 import 'package:seyr/screen/error_and_no_network_and_favorite_screen.dart';
 import 'package:seyr/widget/network_connection_checker.dart';
 import 'package:seyr/widget/spinner.dart';
