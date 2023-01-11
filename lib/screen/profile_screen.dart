@@ -28,6 +28,14 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  List titleList = [
+    'name_title'.tr(),
+    'email_title'.tr(),
+    'password_title'.tr(),
+    'language_title'.tr(),
+  ];
+  var user = FirebaseAuth.instance.currentUser;
+
   void _onTapToListTile(int index, FirestoreUser? user) {
     if (user != null) {
       if (index == 0) {
@@ -52,7 +60,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           );
         }
-      } else if (index == 2) {
+      } else if (index == 2 && titleList.length == 4) {
         Navigator.pushNamed(context, ChangePasswordScreen.routeName,
             arguments: {'email': user.email});
       } else {
@@ -83,7 +91,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return '${user.firstName!} ${user.lastName!}';
       } else if (index == 1) {
         return user.email;
-      } else if (index == 2) {
+      } else if (index == 2 && titleList.length == 4) {
         return null;
       } else {
         return context.locale.languageCode == 'az'
@@ -95,23 +103,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget? _getIcon(int index, FirestoreUser? user) {
-    if (index == 1) {
-      if (user!.password != null) {
+    if (user != null) {
+      if (index == 0) {
         return const Icon(
           Icons.arrow_forward_ios_outlined,
         );
-      }
-    } else if (index == 3) {
-      return const RotatedBox(
-        quarterTurns: 1,
-        child: Icon(
+      } else if (index == 1 && user.password != null) {
+        return const Icon(
           Icons.arrow_forward_ios_outlined,
-        ),
-      );
-    } else {
-      return const Icon(
-        Icons.arrow_forward_ios_outlined,
-      );
+        );
+      } else if (index == 2 && titleList.length == 4) {
+        return const Icon(
+          Icons.arrow_forward_ios_outlined,
+        );
+      } else if(index==2 || index==3) {
+        return const RotatedBox(
+          quarterTurns: 1,
+          child: Icon(
+            Icons.arrow_forward_ios_outlined,
+          ),
+        );
+      }
     }
     return null;
   }
@@ -130,13 +142,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     User? result = FirebaseAuth.instance.currentUser;
-
-    final List titleList = [
-      'name_title'.tr(),
-      'email_title'.tr(),
-      'password_title'.tr(),
-      'language_title'.tr(),
-    ];
     return Column(
       children: [
         Flexible(
@@ -183,6 +188,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   stream: FireStoreService().getUserDataByUID(result!.uid),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
+                      if (user!.providerData.first.providerId=='google.com' && titleList.length == 4) {
+                        titleList.removeAt(2);
+                      }
                       return ListView.separated(
                         padding: EdgeInsets.zero,
                         shrinkWrap: true,
@@ -190,15 +198,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         itemBuilder: (BuildContext context, int index) =>
                             CustomListTile(
                           title: titleList[index],
-                          data: index != 2 ? 'loading_msg'.tr() : null,
-                          icon: index == 3
-                              ? const RotatedBox(
-                                  quarterTurns: 1,
-                                  child: Icon(
-                                    Icons.arrow_forward_ios_outlined,
-                                  ),
-                                )
-                              : const Icon(
+                          data:titleList.length==4 && index==2?null:'loading_msg'.tr(),
+                          icon:titleList.length==3 && index==1 ?null:const Icon(
                                   Icons.arrow_forward_ios_outlined,
                                 ),
                         ),
@@ -216,6 +217,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           path: errorImage,
                         );
                       } else {
+                        if (snapshot.data!.password == null &&
+                            titleList.length == 4) {
+                          titleList.removeAt(2);
+                        }
                         return ListView.separated(
                           padding: EdgeInsets.zero,
                           shrinkWrap: true,
@@ -227,16 +232,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               snapshot.data,
                             ),
                             behavior: HitTestBehavior.translucent,
-                            child: snapshot.data!.password == null && index == 2
-                                ? null
-                                : CustomListTile(
-                                    title: titleList[index],
-                                    data: _changeDataByIndex(
-                                      index,
-                                      snapshot.data,
-                                    ),
-                                    icon: _getIcon(index, snapshot.data),
-                                  ),
+                            child: CustomListTile(
+                              title: titleList[index],
+                              data: _changeDataByIndex(
+                                index,
+                                snapshot.data,
+                              ),
+                              icon: _getIcon(index, snapshot.data),
+                            ),
                           ),
                           separatorBuilder: (_, __) => const Divider(
                             height: 1,
