@@ -227,14 +227,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               snapshot.data,
                             ),
                             behavior: HitTestBehavior.translucent,
-                            child: CustomListTile(
-                              title: titleList[index],
-                              data: _changeDataByIndex(
-                                index,
-                                snapshot.data,
-                              ),
-                              icon: _getIcon(index, snapshot.data),
-                            ),
+                            child: snapshot.data!.password == null && index == 2
+                                ? null
+                                : CustomListTile(
+                                    title: titleList[index],
+                                    data: _changeDataByIndex(
+                                      index,
+                                      snapshot.data,
+                                    ),
+                                    icon: _getIcon(index, snapshot.data),
+                                  ),
                           ),
                           separatorBuilder: (_, __) => const Divider(
                             height: 1,
