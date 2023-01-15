@@ -14,5 +14,6 @@ const upperCasePattern = "(?=.*[A-Z])";
 
 const algoliaAppId= "VP64ATWYSZ";
 const algoliaApiKey= "cd6ba904091dc91cfd8f7e6109d44127";
-const googleApiKey = "AIzaSyBMDmuNQ8ZSFwTYUtl4ynOeJrWKU3bHpo0";
+const googleApiKeyAndroid = "AIzaSyBMDmuNQ8ZSFwTYUtl4ynOeJrWKU3bHpo0";
+const googleApiKeyIos = "AIzaSyBjJ0sUaNprHyK3Nq2Owf3BVb5YLkDxeLM";
 const googleBasePart = "https://maps.googleapis.com/maps/api/";
