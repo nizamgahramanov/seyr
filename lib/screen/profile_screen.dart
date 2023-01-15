@@ -116,7 +116,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return const Icon(
           Icons.arrow_forward_ios_outlined,
         );
-      } else if(index==2 || index==3) {
+      } else if (index == 2 || index == 3) {
         return const RotatedBox(
           quarterTurns: 1,
           child: Icon(
@@ -188,7 +188,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   stream: FireStoreService().getUserDataByUID(result!.uid),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      if (user!.providerData.first.providerId=='google.com' && titleList.length == 4) {
+                      if (user!.providerData.first.providerId == 'google.com' &&
+                          titleList.length == 4) {
                         titleList.removeAt(2);
                       }
                       return ListView.separated(
@@ -198,8 +199,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         itemBuilder: (BuildContext context, int index) =>
                             CustomListTile(
                           title: titleList[index],
-                          data:titleList.length==4 && index==2?null:'loading_msg'.tr(),
-                          icon:titleList.length==3 && index==1 ?null:const Icon(
+                          data: titleList.length == 4 && index == 2
+                              ? null
+                              : 'loading_msg'.tr(),
+                          icon: titleList.length == 3 && index == 1
+                              ? null
+                              : const Icon(
                                   Icons.arrow_forward_ios_outlined,
                                 ),
                         ),

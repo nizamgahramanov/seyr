@@ -42,11 +42,11 @@
   "english": "English",
   "azerbaijani": "Azerbaijani",
   "be_our_valuable_member_dialog_msg_title": "Be Our Valuable Member",
-  "please_sign_up_before_make_favorite_dialog_msg_subtitle": "Please sign up before make favorite",
+  "please_sign_up_before_make_favorite_dialog_msg_subtitle": "Please Sign Up Before Make Favorite",
   "sign_up_btn": "Sign Up",
   "discover_the_land_of_fire": "DISCOVER THE LAND OF FIRE",
   "password_is_not_correct_dialog_msg": "Password Is Not Correct",
-  "please_check_and_try_again_dialog_msg": "Please check and try again",
+  "please_check_and_try_again_dialog_msg": "Please Check And Try Again",
   "welcome_back_title": "WELCOME BACK",
   "there_is_a_discrepancy_on_email_dialog_msg": "There is a discrepancy on email",
   "home_bottom_nav_bar": "Home",
@@ -69,7 +69,7 @@
   "destination_overview_validation": "Please Enter Destination Overview",
   "destination_region_az_validation": "Please Enter Destination Region In Azerbaijani",
   "destination_region_validation": "Please Enter Destination Region",
-  "unknown_error_msg": "Unknown error occurred while processing your request",
+  "unknown_error_msg": "Unknown Error Occurred While Processing Your Request",
   "oops_error_title": "Oops!",
   "ok_btn": "Ok",
   "loading_msg": "Loading...",
@@ -78,8 +78,7 @@
   "new_password_title": "New Password",
   "repeat_password_title": "Repeat Password",
   "add_image_file_dialog_msg": "Please Add Destination Images",
-  "by_msg": "by"
-
-
-
+  "by_msg": "by",
+  "never_ask_dialog_msg": "Location Permission Denied Forever. Please Open App Settings",
+  "info_dialog_title": "Info"
 }

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:seyr/helper/app_light_text.dart';
@@ -29,7 +30,25 @@ class _LocationInputState extends State<LocationInput> {
       final locData = await Location().getLocation();
       showPreview(locData.latitude!, locData.longitude!);
       widget.onSelectPlace(locData.latitude, locData.longitude);
+    } on PlatformException catch (platformError) {
+      print(platformError.code);
+      print(platformError.details);
+      print(platformError.message);
+      switch(platformError.code){
+        case "PERMISSION_DENIED_NEVER_ASK":
+          Utility.getInstance().showAlertDialog(
+            context: context,
+            alertTitle: 'info_dialog_title'.tr(),
+            alertMessage: 'never_ask_dialog_msg'.tr(),
+            popButtonText: 'back_btn'.tr(),
+            popButtonColor: AppColors.backgroundColorOfApp,
+            popButtonTextColor: AppColors.blackColor,
+            onPopTap: () => Navigator.of(context).pop(),
+          );
+      }
     } catch (error) {
+      print('error');
+      print(error);
       Utility.getInstance().showAlertDialog(
         context: context,
         alertTitle: 'oops_error_title'.tr(),
