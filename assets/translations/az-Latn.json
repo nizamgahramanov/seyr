@@ -80,5 +80,6 @@
   "add_image_file_dialog_msg": "Zəhmət Olmasa Səyahət Yeri Şəkillərini Daxil Edin",
   "by_msg": "tərəfindən",
   "never_ask_dialog_msg": "Yerləşmə İcazəsi Daimi Olaraq Rədd Edilib. Zəhmət Olmasa, Tətbiq Tənzimləmələrini Açın",
-  "info_dialog_title": "Məlumat"
+  "info_dialog_title": "Məlumat",
+  "continue_with_apple_btn": "Apple İlə Davam Et"
 }

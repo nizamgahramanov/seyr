@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +30,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
   bool _isShowSaveButton = false;
   bool _isDisableContinueButton = false;
   bool _isDisableGoogleButton = false;
+  bool _isDisableAppleButton = false;
 
   void checkIfEmailChanged(String character) {
     if (_emailController.text != '' &&
@@ -106,6 +109,16 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
     });
   }
 
+  void signInWithApple() async {
+    setState(() {
+      _isDisableAppleButton = true;
+    });
+    await AuthService().signInWithApple(context);
+    setState(() {
+      _isDisableAppleButton = false;
+    });
+  }
+
   void saveForm() {
     FocusScope.of(context).unfocus();
     _form.currentState!.save();
@@ -162,7 +175,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                   ),
                   if (_isShowSaveButton)
                     const SizedBox(
-                      height: 30,
+                      height: 15,
                     ),
                   if (_isShowSaveButton)
                     CustomButton(
@@ -176,7 +189,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                     children: <Widget>[
                       const Expanded(
                         child: Divider(
-                          height: 70,
+                          height: 60,
                           indent: 20,
                           endIndent: 10,
                           thickness: 1.5,
@@ -191,7 +204,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                       ),
                       const Expanded(
                         child: Divider(
-                          height: 70,
+                          height: 50,
                           indent: 10,
                           endIndent: 20,
                           thickness: 1.5,
@@ -213,6 +226,24 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                       child: SvgPicture.asset(googleColorfulIconImage),
                     ),
                   ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  if (Platform.isIOS)
+                    CustomButton(
+                      buttonText: 'continue_with_apple_btn'.tr(),
+                      borderColor: AppColors.primaryColorOfApp,
+                      onTap: _isDisableAppleButton ? () {} : signInWithApple,
+                      borderRadius: 15,
+                      buttonColor: Colors.transparent,
+                      textColor: AppColors.primaryColorOfApp,
+                      icon: Container(
+                        width: 23,
+                        height: 23,
+                        margin: const EdgeInsets.only(right: 38),
+                        child: SvgPicture.asset(appleIconImage),
+                      ),
+                    ),
                 ],
               ),
             ),

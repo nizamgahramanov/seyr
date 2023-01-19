@@ -1,10 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:seyr/helper/utility.dart';
 import 'package:seyr/model/user.dart';
-
 import '../exception/custom_auth_exception.dart';
 import '../helper/app_colors.dart';
 import 'firebase_firestore_service.dart';
@@ -29,27 +29,29 @@ class AuthService {
     try {
       final GoogleSignInAccount? googleSignInAccount =
           await GoogleSignIn(scopes: <String>["email"]).signIn();
-      final GoogleSignInAuthentication googleSignInAuthentication =
-          await googleSignInAccount!.authentication;
-      final credential = auth.GoogleAuthProvider.credential(
-        accessToken: googleSignInAuthentication.accessToken,
-        idToken: googleSignInAuthentication.idToken,
-      );
-      auth.UserCredential result =
-          await _firebaseAuth.signInWithCredential(credential);
-      if (result.user != null) {
-        List<String>? nameAndSurname =
-            splitGoogleFullName(result.user!.displayName);
-        FireStoreService().createUserInFirestore(
-          result.user!.uid,
-          nameAndSurname == null ? null : nameAndSurname[0],
-          nameAndSurname == null ? null : nameAndSurname[1],
-          result.user!.email!,
-          null,
+      if (googleSignInAccount != null) {
+        final GoogleSignInAuthentication googleSignInAuthentication =
+            await googleSignInAccount.authentication;
+        final credential = auth.GoogleAuthProvider.credential(
+          accessToken: googleSignInAuthentication.accessToken,
+          idToken: googleSignInAuthentication.idToken,
         );
+        auth.UserCredential userCredential =
+            await _firebaseAuth.signInWithCredential(credential);
+        if (userCredential.user != null) {
+          List<String>? nameAndSurname =
+              splitGoogleFullName(userCredential.user!.displayName);
+          storeInFirestore(
+            userCredential.user!.uid,
+            nameAndSurname == null ? null : nameAndSurname[0],
+            nameAndSurname == null ? null : nameAndSurname[1],
+            userCredential.user!.email!,
+            null,
+          );
+        }
+        return userCredential;
       }
-
-      return result;
+      return null;
     } on auth.FirebaseAuthException catch (authError) {
       Utility.getInstance().showAlertDialog(
         context: context,
@@ -85,8 +87,9 @@ class AuthService {
         email: email,
         password: password,
       );
+
       if (userCredential.user != null) {
-        FireStoreService().createUserInFirestore(
+        storeInFirestore(
           userCredential.user!.uid,
           firstName,
           lastName,
@@ -149,6 +152,65 @@ class AuthService {
         onPopTap: () => Navigator.of(context).pop(),
       );
       throw CustomException(ctx: context, errorMessage: "Unknown Error");
+    }
+  }
+
+  Future<auth.UserCredential> signInWithApple(BuildContext context) async {
+    try {
+      final appleProvider = auth.AppleAuthProvider();
+
+      if (kIsWeb) {
+        return await _firebaseAuth.signInWithPopup(appleProvider);
+      } else {
+        var userCredential =
+            await _firebaseAuth.signInWithProvider(appleProvider);
+        if (userCredential.user != null) {
+          List<String>? nameAndSurname =
+              splitGoogleFullName(userCredential.user!.displayName);
+          storeInFirestore(
+            userCredential.user!.uid,
+            nameAndSurname == null ? null : nameAndSurname[0],
+            nameAndSurname == null ? null : nameAndSurname[1],
+            userCredential.user!.email!,
+            null,
+          );
+        }
+        return userCredential;
+      }
+    } on auth.FirebaseAuthException catch (authError) {
+      Utility.getInstance().showAlertDialog(
+        context: context,
+        alertTitle: 'oops_error_title'.tr(),
+        alertMessage: authError.message,
+        popButtonText: 'ok_btn'.tr(),
+        popButtonColor: AppColors.redAccent300,
+        onPopTap: () => Navigator.of(context).pop(),
+      );
+      throw CustomAuthException(context, authError.code, authError.message!);
+    } catch (e) {
+      Utility.getInstance().showAlertDialog(
+        context: context,
+        alertTitle: 'oops_error_title'.tr(),
+        alertMessage: 'unknown_error_msg'.tr(),
+        popButtonText: 'ok_btn'.tr(),
+        popButtonColor: AppColors.redAccent300,
+        onPopTap: () => Navigator.of(context).pop(),
+      );
+      throw CustomException(ctx: context, errorMessage: "Unknown Error");
+    }
+  }
+
+  void storeInFirestore(String uid, String? firstname, String? surname,
+      String email, String? password) async {
+    Map<String, dynamic>? userdata = await FireStoreService().getUserByUid(uid);
+    if (userdata == null ||
+        (userdata['firstName'] == null &&
+                userdata['lastName'] == null &&
+                firstname != null ||
+            surname != null)) {
+      print("ENtered and send request to Firestore");
+      FireStoreService()
+          .createUserInFirestore(uid, firstname, surname, email, password);
     }
   }
 

@@ -99,7 +99,7 @@ class FireStoreService {
     }
   }
 
-  Stream<FirestoreUser> getUserDataByUID(String uid) {
+  Stream<FirestoreUser> getUserDataByUID(String uid){
     return _db
         .collection("users")
         .doc(uid)

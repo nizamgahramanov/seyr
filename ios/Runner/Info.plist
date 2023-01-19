@@ -55,5 +55,17 @@
         <string>This app does not require access to the microphone.</string>
         <key>NSCameraUsageDescription</key>
         <string>This app requires access to the camera.</string>
+        <key>CFBundleURLTypes</key>
+        <array>
+        	<dict>
+        		<key>CFBundleTypeRole</key>
+        		<string>Editor</string>
+        		<key>CFBundleURLSchemes</key>
+        		<array>
+        			<string>com.googleusercontent.apps.942922799291-r5ok0d89gk60gak7cstrrgevummno7a2</string>
+        		</array>
+        	</dict>
+        </array>
+        <!-- End of the Google Sign-in Section -->
 	</dict>
 </plist>

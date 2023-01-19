@@ -37,6 +37,8 @@ class CustomTextFormField extends StatelessWidget {
       onChanged: onChanged,
       focusNode: focusNode,
       validator: validator,
+      autofocus: false,
+      enableSuggestions: false,
       onFieldSubmitted: onFieldSubmitted,
       obscuringCharacter: "*",
       style: TextStyle(
@@ -48,7 +50,6 @@ class CustomTextFormField extends StatelessWidget {
         filled: true,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15.0),
-          // borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(
@@ -58,7 +59,6 @@ class CustomTextFormField extends StatelessWidget {
         ),
         suffixIcon: suffixIcon,
         suffixIconColor: AppColors.primaryColorOfApp,
-        // focusColor: AppColors.primaryColorOfApp
       ),
       onSaved: onSaved,
     );

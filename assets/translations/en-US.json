@@ -80,5 +80,6 @@
   "add_image_file_dialog_msg": "Please Add Destination Images",
   "by_msg": "by",
   "never_ask_dialog_msg": "Location Permission Denied Forever. Please Open App Settings",
-  "info_dialog_title": "Info"
+  "info_dialog_title": "Info",
+  "continue_with_apple_btn": "Continue With Apple"
 }

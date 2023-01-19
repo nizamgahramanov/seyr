@@ -8,7 +8,6 @@ import 'package:seyr/helper/app_colors.dart';
 import 'package:seyr/helper/constants.dart';
 import 'package:seyr/helper/custom_icon_text.dart';
 import 'package:seyr/helper/utility.dart';
-import 'package:seyr/model/firestore_user.dart';
 import 'package:seyr/screen/main_screen.dart';
 import 'package:seyr/screen/maps_screen.dart';
 import 'package:seyr/service/firebase_firestore_service.dart';
@@ -282,70 +281,80 @@ class _DetailScreenState extends State<DetailScreen>
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              if (locale != 'az')
-                                AppLightText(
-                                  text: 'by_msg'.tr(),
-                                  padding: EdgeInsets.zero,
-                                  size: 8,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.primaryColorOfApp,
-                                ),
-                              StreamBuilder<DocumentSnapshot>(
-                                  stream: clickedDestination.user.snapshots(),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return AppLightText(
-                                        text: 'loading_msg'.tr(),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 5,
-                                        ),
+                          StreamBuilder<DocumentSnapshot>(
+                              stream: clickedDestination.user.snapshots(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return AppLightText(
+                                    text: 'loading_msg'.tr(),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 5,
+                                    ),
+                                  );
+                                } else if (snapshot.connectionState ==
+                                        ConnectionState.none ||
+                                    snapshot.connectionState ==
+                                        ConnectionState.active) {
+                                  if (snapshot.hasError) {
+                                    return AppLightText(
+                                      text: "oops_error_title".tr(),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 5,
+                                      ),
+                                    );
+                                  } else {
+                                    if (snapshot.data!["firstName"] != null ||
+                                        snapshot.data!["lastName"] != null) {
+                                      return Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          if (locale != 'az')
+                                            AppLightText(
+                                              text: 'by_msg'.tr(),
+                                              padding: EdgeInsets.zero,
+                                              size: 8,
+                                              fontWeight: FontWeight.bold,
+                                              color:
+                                                  AppColors.primaryColorOfApp,
+                                            ),
+                                          AppLightText(
+                                            text:
+                                                '${snapshot.data!["firstName"]} ${snapshot.data!["lastName"]}',
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 5,
+                                            ),
+                                            size: 12,
+                                            fontWeight: FontWeight.normal,
+                                            color: AppColors.primaryColorOfApp,
+                                          ),
+                                          if (locale == 'az')
+                                            AppLightText(
+                                              text: 'by_msg'.tr(),
+                                              padding: EdgeInsets.zero,
+                                              size: 8,
+                                              fontWeight: FontWeight.bold,
+                                              color:
+                                                  AppColors.primaryColorOfApp,
+                                            ),
+                                        ],
                                       );
-                                    } else if (snapshot.connectionState ==
-                                            ConnectionState.none ||
-                                        snapshot.connectionState ==
-                                            ConnectionState.active) {
-                                      if (snapshot.hasError) {
-                                        return AppLightText(
-                                          text: "oops_error_title".tr(),
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 5,
-                                          ),
-                                        );
-                                      } else {
-                                        return AppLightText(
-                                          text: '${snapshot.data!["firstName"]} ${snapshot.data!["lastName"]}',
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 5,
-                                          ),
-                                          size: 12,
-                                          fontWeight: FontWeight.normal,
-                                          color: AppColors.primaryColorOfApp,
-                                        );
-                                      }
                                     } else {
-                                      return AppLightText(
-                                        text: "oops_error_title".tr(),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 5,
-                                        ),
-                                      );
+                                      return Container();
                                     }
-                                  }),
-                              if (locale == 'az')
-                                AppLightText(
-                                  text: 'by_msg'.tr(),
-                                  padding: EdgeInsets.zero,
-                                  size: 8,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.primaryColorOfApp,
-                                ),
-                            ],
-                          ),
+                                  }
+                                } else {
+                                  return AppLightText(
+                                    text: "oops_error_title".tr(),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 5,
+                                    ),
+                                  );
+                                }
+                              }),
                           AppLightText(
                             text: 'overview'.tr(),
                             color: AppColors.blackColor,

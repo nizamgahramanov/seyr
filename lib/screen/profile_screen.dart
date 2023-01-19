@@ -28,109 +28,58 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  List titleList = [
-    'name_title'.tr(),
-    'email_title'.tr(),
-    'password_title'.tr(),
-    'language_title'.tr(),
-  ];
-  var user = FirebaseAuth.instance.currentUser;
-
-  void _onTapToListTile(int index, FirestoreUser? user) {
-    if (user != null) {
-      if (index == 0) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ChangeNameScreen(
-              firstName: user.firstName!,
-              lastName: user.lastName!,
-            ),
-          ),
-        );
-      } else if (index == 1) {
-        if (user.password != null) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ChangeEmailScreen(
-                email: user.email,
-                password: user.password,
-              ),
-            ),
-          );
-        }
-      } else if (index == 2 && titleList.length == 4) {
-        Navigator.pushNamed(context, ChangePasswordScreen.routeName,
-            arguments: {'email': user.email});
-      } else {
-        showModalBottomSheet<void>(
-          context: context,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(25.0),
-            ),
-          ),
-          builder: (BuildContext context) {
-            return Container(
-              margin: const EdgeInsets.symmetric(vertical: 20),
-              height: 230,
-              child: RadioListBuilder(
-                langCode: context.locale.languageCode,
-              ),
-            );
-          },
-        );
-      }
-    }
-  }
-
-  String? _changeDataByIndex(int index, FirestoreUser? user) {
-    if (user != null) {
-      if (index == 0) {
-        return '${user.firstName!} ${user.lastName!}';
-      } else if (index == 1) {
-        return user.email;
-      } else if (index == 2 && titleList.length == 4) {
-        return null;
-      } else {
-        return context.locale.languageCode == 'az'
-            ? 'azerbaijani'.tr()
-            : 'english'.tr();
-      }
-    }
-    return null;
-  }
-
-  Widget? _getIcon(int index, FirestoreUser? user) {
-    if (user != null) {
-      if (index == 0) {
-        return const Icon(
-          Icons.arrow_forward_ios_outlined,
-        );
-      } else if (index == 1 && user.password != null) {
-        return const Icon(
-          Icons.arrow_forward_ios_outlined,
-        );
-      } else if (index == 2 && titleList.length == 4) {
-        return const Icon(
-          Icons.arrow_forward_ios_outlined,
-        );
-      } else if (index == 2 || index == 3) {
-        return const RotatedBox(
-          quarterTurns: 1,
-          child: Icon(
-            Icons.arrow_forward_ios_outlined,
-          ),
-        );
-      }
-    }
-    return null;
-  }
-
   void logout() {
     Navigator.of(context).pop();
     AuthService().signOut(context);
+  }
+
+  void changeName(String firstName, String lastName) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChangeNameScreen(
+          firstName: firstName,
+          lastName: lastName,
+        ),
+      ),
+    );
+  }
+
+  void changeEmail(String email, String password) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChangeEmailScreen(
+          email: email,
+          password: password,
+        ),
+      ),
+    );
+  }
+
+  void changePassword(String email) {
+    Navigator.pushNamed(context, ChangePasswordScreen.routeName,
+        arguments: {'email': email});
+  }
+
+  void changeLanguage() {
+    showModalBottomSheet<void>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(25.0),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          margin: const EdgeInsets.symmetric(vertical: 20),
+          height: 230,
+          child: RadioListBuilder(
+            langCode: context.locale.languageCode,
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -141,42 +90,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    User? result = FirebaseAuth.instance.currentUser;
+    User? currentUser = FirebaseAuth.instance.currentUser;
     return Column(
       children: [
-        Flexible(
-          fit: FlexFit.tight,
-          child: Stack(
-            children: [
-              Positioned(
-                width: MediaQuery.of(context).size.width,
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(0),
-                    bottomRight: Radius.circular(0),
-                  ),
-                  child: Image.asset(
-                    profileScreenImage,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 50,
-                left: 20,
-                right: 20,
-                child: AppLightText(
-                  text: 'profile_title'.tr(),
-                  color: AppColors.whiteColor,
-                  size: 32,
-                  fontWeight: FontWeight.bold,
-                  spacing: 2,
-                  padding: EdgeInsets.zero,
-                ),
-              ),
-            ],
-          ),
-        ),
+        _buildTopPart(),
         Column(
           children: [
             const SizedBox(
@@ -185,80 +102,169 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Container(
               color: AppColors.whiteColor,
               child: StreamBuilder<FirestoreUser>(
-                  stream: FireStoreService().getUserDataByUID(result!.uid),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      if (user!.providerData.first.providerId == 'google.com' &&
-                          titleList.length == 4) {
-                        titleList.removeAt(2);
-                      }
-                      return ListView.separated(
-                        padding: EdgeInsets.zero,
-                        shrinkWrap: true,
-                        itemCount: titleList.length,
-                        itemBuilder: (BuildContext context, int index) =>
-                            CustomListTile(
-                          title: titleList[index],
-                          data: titleList.length == 4 && index == 2
-                              ? null
-                              : 'loading_msg'.tr(),
-                          icon: titleList.length == 3 && index == 1
-                              ? null
-                              : const Icon(
-                                  Icons.arrow_forward_ios_outlined,
-                                ),
-                        ),
-                        separatorBuilder: (_, __) => const Divider(
-                          height: 1,
-                          color: AppColors.primaryColorOfApp,
-                        ),
-                      );
-                    } else if (snapshot.connectionState ==
-                            ConnectionState.active ||
-                        snapshot.connectionState == ConnectionState.done) {
-                      if (snapshot.hasError) {
-                        return ErrorAndNoNetworkAndFavoriteScreen(
-                          text: "something_went_wrong_error_msg".tr(),
-                          path: errorImage,
-                        );
-                      } else {
-                        if (snapshot.data!.password == null &&
-                            titleList.length == 4) {
-                          titleList.removeAt(2);
-                        }
-                        return ListView.separated(
-                          padding: EdgeInsets.zero,
-                          shrinkWrap: true,
-                          itemCount: titleList.length,
-                          itemBuilder: (BuildContext context, int index) =>
-                              GestureDetector(
-                            onTap: () => _onTapToListTile(
-                              index,
-                              snapshot.data,
+                stream: FireStoreService().getUserDataByUID(currentUser!.uid),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting &&
+                      !snapshot.hasData) {
+                    if (currentUser.providerData.first.providerId ==
+                        'google.com') {
+                      return Column(
+                        children: [
+                          CustomListTile(
+                            title: 'name_title'.tr(),
+                            data: 'loading_msg'.tr(),
+                            icon: const Icon(
+                              Icons.arrow_forward_ios_outlined,
                             ),
-                            behavior: HitTestBehavior.translucent,
-                            child: CustomListTile(
-                              title: titleList[index],
-                              data: _changeDataByIndex(
-                                index,
-                                snapshot.data,
+                          ),
+                          CustomListTile(
+                            title: 'email_title'.tr(),
+                            data: 'loading_msg'.tr(),
+                          ),
+                          CustomListTile(
+                            title: 'language_title'.tr(),
+                            data: 'loading_msg'.tr(),
+                            isDividerShow: false,
+                            icon: const RotatedBox(
+                              quarterTurns: 1,
+                              child: Icon(
+                                Icons.arrow_forward_ios_outlined,
                               ),
-                              icon: _getIcon(index, snapshot.data),
                             ),
                           ),
-                          separatorBuilder: (_, __) => const Divider(
-                            height: 1,
-                            color: AppColors.primaryColorOfApp,
+                        ],
+                      );
+                    } else if (currentUser.providerData.first.providerId ==
+                        'apple.com') {
+                      return Column(
+                        children: [
+                          CustomListTile(
+                            title: 'email_title'.tr(),
+                            data: 'loading_msg'.tr(),
                           ),
-                        );
-                      }
+                          CustomListTile(
+                            title: 'language_title'.tr(),
+                            data: 'loading_msg'.tr(),
+                            isDividerShow: false,
+                            icon: const RotatedBox(
+                              quarterTurns: 1,
+                              child: Icon(
+                                Icons.arrow_forward_ios_outlined,
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
                     } else {
+                      return Column(
+                        children: [
+                          CustomListTile(
+                            title: 'name_title'.tr(),
+                            data: 'loading_msg'.tr(),
+                            icon: const Icon(
+                              Icons.arrow_forward_ios_outlined,
+                            ),
+                          ),
+                          CustomListTile(
+                            title: 'email_title'.tr(),
+                            data: 'loading_msg'.tr(),
+                            icon: const Icon(
+                              Icons.arrow_forward_ios_outlined,
+                            ),
+                          ),
+                          CustomListTile(
+                            title: 'password_title'.tr(),
+                            icon: const Icon(
+                              Icons.arrow_forward_ios_outlined,
+                            ),
+                          ),
+                          CustomListTile(
+                            title: 'language_title'.tr(),
+                            data: 'loading_msg'.tr(),
+                            isDividerShow: false,
+                            icon: const RotatedBox(
+                              quarterTurns: 1,
+                              child: Icon(
+                                Icons.arrow_forward_ios_outlined,
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                  } else if (snapshot.hasData ||
+                      snapshot.connectionState == ConnectionState.active ||
+                      snapshot.connectionState == ConnectionState.done) {
+                    if (snapshot.hasError) {
                       return ErrorAndNoNetworkAndFavoriteScreen(
                         text: "something_went_wrong_error_msg".tr(),
                         path: errorImage,
                       );
+                    } else {
+                      return Column(
+                        children: [
+                          if (snapshot.data!.firstName != null &&
+                              snapshot.data!.lastName != null)
+                            CustomListTile(
+                              title: 'name_title'.tr(),
+                              data:
+                                  '${snapshot.data!.firstName} ${snapshot.data!.lastName}',
+                              icon: const Icon(
+                                Icons.arrow_forward_ios_outlined,
+                              ),
+                              onTapFunction: () => changeName(
+                                snapshot.data!.firstName!,
+                                snapshot.data!.lastName!,
+                              ),
+                            ),
+                          CustomListTile(
+                            title: 'email_title'.tr(),
+                            data: snapshot.data!.email,
+                            icon: snapshot.data!.password == null
+                                ? null
+                                : const Icon(
+                                    Icons.arrow_forward_ios_outlined,
+                                  ),
+                            onTapFunction: snapshot.data!.password == null
+                                ? null
+                                : () => changeEmail(snapshot.data!.email,
+                                    snapshot.data!.password!),
+                          ),
+                          if (snapshot.data!.password != null)
+                            CustomListTile(
+                              title: 'password_title'.tr(),
+                              icon: const Icon(
+                                Icons.arrow_forward_ios_outlined,
+                              ),
+                              onTapFunction: snapshot.data!.password == null
+                                  ? null
+                                  : () => changePassword(snapshot.data!.email),
+                            ),
+                          CustomListTile(
+                            title: 'language_title'.tr(),
+                            data: context.locale.languageCode == 'az'
+                                ? 'azerbaijani'.tr()
+                                : 'english'.tr(),
+                            icon: const RotatedBox(
+                              quarterTurns: 1,
+                              child: Icon(
+                                Icons.arrow_forward_ios_outlined,
+                              ),
+                            ),
+                            isDividerShow: false,
+                            onTapFunction: () => changeLanguage(),
+                          ),
+                        ],
+                      );
                     }
-                  }),
+                  } else {
+                    return ErrorAndNoNetworkAndFavoriteScreen(
+                      text: "something_went_wrong_error_msg".tr(),
+                      path: errorImage,
+                    );
+                  }
+                },
+              ),
             ),
             const SizedBox(
               height: 8,
@@ -285,6 +291,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   icon: const Icon(
                     Icons.logout_rounded,
                   ),
+                  isDividerShow: false,
                 ),
               ),
             ),
@@ -294,6 +301,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         ),
       ],
+    );
+  }
+
+  Widget _buildTopPart() {
+    return Flexible(
+      fit: FlexFit.tight,
+      child: Stack(
+        children: [
+          Positioned(
+            width: MediaQuery.of(context).size.width,
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(0),
+                bottomRight: Radius.circular(0),
+              ),
+              child: Image.asset(
+                profileScreenImage,
+                fit: BoxFit.fill,
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 20,
+            left: 20,
+            right: 20,
+            child: AppLightText(
+              text: 'profile_title'.tr(),
+              color: AppColors.whiteColor,
+              size: 32,
+              fontWeight: FontWeight.bold,
+              spacing: 2,
+              padding: EdgeInsets.zero,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
