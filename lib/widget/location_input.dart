@@ -31,9 +31,6 @@ class _LocationInputState extends State<LocationInput> {
       showPreview(locData.latitude!, locData.longitude!);
       widget.onSelectPlace(locData.latitude, locData.longitude);
     } on PlatformException catch (platformError) {
-      print(platformError.code);
-      print(platformError.details);
-      print(platformError.message);
       switch(platformError.code){
         case "PERMISSION_DENIED_NEVER_ASK":
           Utility.getInstance().showAlertDialog(
@@ -47,8 +44,6 @@ class _LocationInputState extends State<LocationInput> {
           );
       }
     } catch (error) {
-      print('error');
-      print(error);
       Utility.getInstance().showAlertDialog(
         context: context,
         alertTitle: 'oops_error_title'.tr(),

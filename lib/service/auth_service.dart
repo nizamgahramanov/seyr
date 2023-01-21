@@ -208,7 +208,6 @@ class AuthService {
                 userdata['lastName'] == null &&
                 firstname != null ||
             surname != null)) {
-      print("ENtered and send request to Firestore");
       FireStoreService()
           .createUserInFirestore(uid, firstname, surname, email, password);
     }
