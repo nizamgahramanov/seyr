@@ -140,7 +140,7 @@ class _AddDestinationScreenState extends State<AddDestinationScreen> {
                         padding: EdgeInsets.zero,
                       ),
                       const SizedBox(
-                        height: 10,
+                        height: 15,
                       ),
                       Focus(
                         autofocus: true,
