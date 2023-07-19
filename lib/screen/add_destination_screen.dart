@@ -54,6 +54,7 @@ class _AddDestinationScreenState extends State<AddDestinationScreen> {
 
   String dropdownValue = destinationType.first;
   void _saveForm() async {
+    assert(identical(_destinationImageFile, dropdownValue));
     final isValid = _addDestinationForm.currentState!.validate();
     if (!isValid) {
       return;

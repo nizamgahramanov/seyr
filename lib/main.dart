@@ -131,8 +131,9 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSwatch().copyWith(
-              primary: AppColors.primaryColorOfApp,
-              secondary: AppColors.blackColor38),
+            primary: AppColors.primaryColorOfApp,
+            secondary: AppColors.blackColor38,
+          ),
           textSelectionTheme: const TextSelectionThemeData(
             selectionColor: AppColors.primaryColorOfApp,
             cursorColor: AppColors.primaryColorOfApp,

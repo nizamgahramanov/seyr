@@ -14,7 +14,7 @@ class Wrapper extends StatefulWidget {
   int? bottomNavIndex;
 
   static const routeName = '/wrapper';
-  Wrapper({
+    Wrapper({
     Key? key,
     required this.isLogin,
     this.bottomNavIndex,
